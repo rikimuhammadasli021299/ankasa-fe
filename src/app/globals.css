@@ -16,12 +16,26 @@
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.text-primary {
+  color: #414141;
+}
+
+.text-secondary {
+  color: #6b6b6b;
+}
+
+.text-black {
+  color: #000;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.text-blue {
+  color: #2395ff;
+}
+
+.bg-blue {
+  background-color: #2395ff;
 }
