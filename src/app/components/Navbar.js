@@ -12,13 +12,13 @@ export default function Navbar() {
   };
   return (
     <>
-      <nav className='bg-white fixed w-full top-0 z-10'>
+      <nav className='bg-white fixed w-full top-0 z-50'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='flex items-center justify-between h-16'>
             <div className='flex items-center'>
               <div className='flex'>
                 <img src='/icon/logo.svg' alt='logo' />
-                <Link href={'/'} className='block py-6 text-[24px] text-[#414141] font-semibold text-primary ms-3'>
+                <Link href={'/'} className='block py-6 text-[24px] text-[#414141] font-semibold ms-3'>
                   Ankasa
                 </Link>
               </div>

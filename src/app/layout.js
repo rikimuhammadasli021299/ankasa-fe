@@ -11,6 +11,20 @@ const poppins = Poppins({
 export const metadata = {
   title: 'Ankasa',
   description: 'Find your Flight and explore the world with us',
+  icons: {
+    icon: [
+      {
+        media: '(prefers-color-scheme: light)',
+        url: '/icon/logo.svg',
+        href: '/icon/logo.svg',
+      },
+      {
+        media: '(prefers-color-scheme: dark)',
+        url: '/icon/logo.svg',
+        href: '/icon/logo.svg',
+      },
+    ],
+  },
 };
 
 export default function RootLayout({ children }) {

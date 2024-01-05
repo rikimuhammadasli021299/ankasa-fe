@@ -7,7 +7,7 @@ function Footer() {
             <div className='flex flex-col'>
               <div className='flex flex-wrap'>
                 <img src='/icon/logo.svg' alt='logo' />
-                <h1 className='text-[24px] text-[#414141] font-semibold text-primary ms-3'>Ankasa</h1>
+                <h1 className='text-[24px] text-[#414141] font-semibold ms-3'>Ankasa</h1>
               </div>
               <p className='text-secondary mt-3 text-[14px] font-normal leading-8'>Find your Flight and explore the world with us. We will take care of the rest</p>
             </div>
