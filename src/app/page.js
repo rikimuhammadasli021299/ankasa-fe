@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import Link from 'next/link';
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState('');
@@ -100,7 +101,9 @@ export default function Home() {
                     </div>
                   </div>
                   <button className='flex justify-around bg-blue w-full items-center h-14 rounded-md mt-5'>
-                    <h1 className='text-white text-[18px] font-bold'>SEARCH FLIGHT</h1>
+                    <Link href={'/find-ticket'} className='text-white text-[18px] font-bold'>
+                      SEARCH FLIGHT
+                    </Link>
                     <img src='/icon/arrow-next.svg' alt='arrow' />
                   </button>
                 </div>

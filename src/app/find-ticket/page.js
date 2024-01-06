@@ -17,6 +17,10 @@ export default function FindTicket() {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [dataAllFlights, setDataAllFlights] = useState();
+  const [departureCity, setDepartureCity] = useState();
+  const [destinationCity, setDestinationCity] = useState();
+  const [filteredFlightByLocation, setFilteredFlightByLocation] = useState();
+
   const { format } = new Intl.NumberFormat('en-us', {
     style: 'currency',
     currency: 'USD',
@@ -30,10 +34,19 @@ export default function FindTicket() {
     try {
       const res = await axios.get('https://easy-lime-seal-toga.cyclic.app/airlines/flight');
       setDataAllFlights(res.data.data);
+      setFilteredFlightByLocation(res.data.data);
     } catch (error) {
       console.log(error.message);
     }
   };
+
+  // get unique departure city
+  const fromCity = dataAllFlights?.map((items) => items.from.location);
+  const uniqueFromcity = Array.from(new Set(fromCity));
+
+  // get unique destination city
+  const toCity = dataAllFlights?.map((items) => items.to.location);
+  const uniqueTocity = Array.from(new Set(toCity));
 
   const getMinPrice = (minValue) => {
     setMinPrice(minValue);
@@ -43,6 +56,30 @@ export default function FindTicket() {
     setMaxPrice(maxValue);
   };
 
+  const formatTime = (dateTimeString) => {
+    const dateTime = new Date(dateTimeString);
+    const hours = dateTime.getHours();
+    const minutes = dateTime.getMinutes();
+    return `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+  };
+
+  const handleViewDetail = (item) => {
+    setViewDetail(viewDetail === item ? false : item);
+  };
+
+  const changeSearch = () => {
+    const result = dataAllFlights?.filter((items) => items.from.location === departureCity && items.to.location === destinationCity);
+    setFilteredFlightByLocation(result);
+  };
+
+  const changeDepartureCity = (value) => {
+    setDepartureCity(value);
+  };
+
+  const changeDestinationCity = (value) => {
+    setDestinationCity(value);
+  };
+
   return (
     <>
       <Navbar />
@@ -50,17 +87,36 @@ export default function FindTicket() {
       <div className='max-w-[1366px] mx-auto bg-blue mt-[135px] rounded-b-[30px] relative'>
         <div className='flex flex-wrap gap-y-8 justify-between items-center w-full px-[25px] md:px-[73px] lg:px-[139px] py-[50px] md:py-[55px]'>
           <div className='flex items-center z-10'>
-            <img src='/icon/logo-white.svg' alt='logo' />
+            <img src='/icon/logo-white.svg' alt='logo' className='hidden md:block' />
             <div className='flex flex-col ms-3'>
-              <div className='flex justify-between gap-x-8'>
+              <div className='flex flex-col md:flex-row justify-between gap-x-8'>
                 <div className='flex flex-col'>
                   <h1 className='text-white text-[12px] font-normal'>From</h1>
-                  <h1 className='text-white text-[16px] font-semibold mt-1'>Medan {'(IDN)'}</h1>
+                  <select value={departureCity} className='text-[16px] text-white bg-transparent font-semibold mt-1 outline-none focus:outline-none' onChange={(e) => changeDepartureCity(e.target.value)}>
+                    {uniqueFromcity?.map((items, index) => {
+                      return (
+                        <option value={items} key={index + 1} className='text-black'>
+                          {items}
+                        </option>
+                      );
+                    })}
+                  </select>
                 </div>
-                <img src='/icon/transfer-white.svg' alt='transfer' />
+                <img src='/icon/transfer-white.svg' alt='transfer' className='hidden md:block' />
+                <div className='flex justify-center items-center mt-4 md:hidden'>
+                  <img src='/icon/sort-white.svg' alt='transfer' className='bolck md:hidden' width={18} height={18} />
+                </div>
                 <div className='flex flex-col'>
-                  <h1 className='text-right text-white text-[12px] font-normal'>To</h1>
-                  <h1 className='text-right text-white text-[16px] font-semibold mt-1'>Tokyo {'(JPN)'}</h1>
+                  <h1 className='text-left md:text-right text-white text-[12px] font-normal'>To</h1>
+                  <select value={destinationCity} className='md:text-[16px] text-white bg-transparent font-semibold mt-1 outline-none focus:outline-none' onChange={(e) => changeDestinationCity(e.target.value)}>
+                    {uniqueTocity?.map((items, index) => {
+                      return (
+                        <option value={items} key={index + 1} className='text-secondary'>
+                          {items}
+                        </option>
+                      );
+                    })}
+                  </select>
                 </div>
               </div>
               <div className='flex flex-wrap justify-between mt-2'>
@@ -78,7 +134,9 @@ export default function FindTicket() {
               </div>
             </div>
           </div>
-          <h1 className='text-white text-[16px] font-semibold z-10'>Change Search</h1>
+          <button className='text-white text-[16px] font-semibold z-10' onClick={changeSearch}>
+            Change Search
+          </button>
         </div>
         <img src='/icon/plane.svg' alt='logo' className='absolute bottom-0' />
       </div>
@@ -95,7 +153,7 @@ export default function FindTicket() {
         </div>
         <div className='flex flex-wrap gap-y-2 w-[70%] justify-between items-center pe-4 sm:pe-6 lg:pe-8'>
           <h1 className='text-[#000] text-[16px] md:text-[24px] font-semibold'>
-            Select Ticket <span className='text-secondary text-[12px] md:text-[16px] font-semibold'>({dataAllFlights?.length} flights found)</span>
+            Select Ticket <span className='text-secondary text-[12px] md:text-[16px] font-semibold'>({filteredFlightByLocation?.length} flights found)</span>
           </h1>
           <div className='flex gap-x-2'>
             <h1 className='text-[#000] text-[12px] md:text-[16px] font-semibold'>Sort by</h1>
@@ -222,7 +280,7 @@ export default function FindTicket() {
           </div>
         </div>
         <div className={`w-[100%] md:w-[73%] flex flex-col`}>
-          {dataAllFlights?.map((items) => {
+          {filteredFlightByLocation?.map((items) => {
             return (
               <div className='flex flex-col w-full bg-[#fff] mb-10 rounded-[15px] px-[28px] py-[28px] md:py-[35px]' key={items.code}>
                 <div className='md:flex hidden items-center gap-x-6'>
@@ -238,13 +296,43 @@ export default function FindTicket() {
                   {/* Tujuan start */}
                   <div className='flex gap-x-6 justify-center w-[150px]'>
                     <div className='flex flex-col'>
-                      <h1 className='text-[#000] text-[24px] leading-5 font-semibold'>IDN</h1>
-                      <h1 className='text-secondary text-[12px] font-normal leading-5 mt-1'>12:33</h1>
+                      <h1 className='text-[#000] text-[24px] leading-5 font-semibold'>
+                        {items.from.country === 'Indonesia'
+                          ? 'IDN'
+                          : items.from.country === 'France'
+                          ? 'FRA'
+                          : items.from.country === 'United States'
+                          ? 'USA'
+                          : items.from.country === 'United Kingdom'
+                          ? 'UK'
+                          : items.from.country === 'Australia'
+                          ? 'AUS'
+                          : items.from.country}
+                      </h1>
+                      <h1 className='text-secondary text-[12px] font-normal leading-5 mt-1'>{formatTime(items.takeoff)}</h1>
                     </div>
                     <img src='/icon/one-way-dark.svg' alt='logo' />
                     <div className='flex flex-col'>
-                      <h1 className='text-[#000] text-[24px] leading-5 font-semibold'>JPN</h1>
-                      <h1 className='text-secondary text-[12px] font-normal leading-5 mt-1'>15:21</h1>
+                      <h1 className='text-[#000] text-[24px] leading-5 font-semibold'>
+                        {items.to.country === 'Indonesia'
+                          ? 'IDN'
+                          : items.to.country === 'France'
+                          ? 'FRA'
+                          : items.to.country === 'United States'
+                          ? 'USA'
+                          : items.to.country === 'United Kingdom'
+                          ? 'UK'
+                          : items.to.country === 'Australia'
+                          ? 'AUS'
+                          : items.to.country === 'Japan'
+                          ? 'JPN'
+                          : items.to.country === 'Singapore'
+                          ? 'SGP'
+                          : items.to.country === 'Malaysia'
+                          ? 'MYS'
+                          : items.to.country}
+                      </h1>
+                      <h1 className='text-secondary text-[12px] font-normal leading-5 mt-1'>{formatTime(items.landing)}</h1>
                     </div>
                   </div>
                   {/* Tujuan end */}
@@ -267,20 +355,62 @@ export default function FindTicket() {
                   </div>
                   {/* Button end */}
                 </div>
-                <div className='flex justify-center md:hidden mt-7 gap-x-2'>
+                <div className='flex justify-center md:justify-start mt-7 gap-x-2'>
                   <h1 className='text-blue text-[16px] font-semibold'>View Details</h1>
-                  <img src={`${viewDetail ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} onClick={() => setViewDetail(!viewDetail)} alt='arrow' />
+                  <img src={`${viewDetail === items ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} onClick={() => handleViewDetail(items)} alt='arrow' />
                 </div>
-                <div className={`${viewDetail ? 'flex' : 'hidden'} md:hidden flex-col items-center mt-3 justify-center`}>
+                <div className={`${viewDetail === items ? 'flex' : 'hidden'} flex-col md:flex-row items-center mt-3 bg-slate-50 shadow-none md:shadow-md rounded-t-xl md:rounded-xl`}>
+                  <div className='flex w-full md:w-[45%] p-3 justify-center '>
+                    <div className='flex flex-col gap-y-2 items-center md:items-start'>
+                      <div className='flex items-center gap-x-2'>
+                        <img src='/icon/one-way-dark.svg' alt='logo' />
+                        <h1 className='text-secondary text-[12px] font-normal'>
+                          {items.from.name} ({items.from.code})
+                        </h1>
+                      </div>
+                      <div className='flex items-center gap-x-2'>
+                        <img src='/icon/gate.svg' alt='location' width={18} height={18} />
+                        <h1 className='text-secondary text-[12px] font-normal'>{items.from.terminal}</h1>
+                      </div>
+                      <div className='flex items-center gap-x-2'>
+                        <img src='/icon/map-pin.svg' alt='location' width={18} height={18} />
+                        <h1 className='text-secondary text-[12px] font-normal'>{items.from.location}</h1>
+                      </div>
+                    </div>
+                  </div>
+                  <div className='flex md:w-[10%] justify-center'>
+                    <img src='/icon/transfer-dark.svg' alt='transfer' className='hidden md:block' />
+                    <img src='/icon/sort-grey.svg' alt='transfer' className='block md:hidden' />
+                  </div>
+                  <div className='flex w-full md:w-[45%] p-3 justify-center'>
+                    <div className='flex flex-col gap-y-2 items-center md:items-start'>
+                      <div className='flex gap-x-2'>
+                        <img src='/icon/one-way-dark.svg' alt='logo' />
+                        <h1 className='text-secondary text-[12px] font-normal'>
+                          {items.to.name} ({items.to.code})
+                        </h1>
+                      </div>
+                      <div className='flex items-center gap-x-2'>
+                        <img src='/icon/gate.svg' alt='location' width={18} height={18} />
+                        <h1 className='text-secondary text-[12px] font-normal'>{items.to.terminal}</h1>
+                      </div>
+                      <div className='flex items-center gap-x-2'>
+                        <img src='/icon/map-pin.svg' alt='location' width={18} height={18} />
+                        <h1 className='text-secondary text-[12px] font-normal'>{items.to.location}</h1>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className={`${viewDetail === items ? 'flex' : 'hidden'} md:hidden flex-col items-center pt-3 justify-center bg-slate-50`}>
                   <h1 className='text-[#595959] text-[16px] leading-5 font-normal'>{items.interval_time}</h1>
                   <h1 className='text-secondary text-[12px] font-normal leading-5'>{items.transit == 0 ? 'Direct' : `(${items.transit} Transit)`}</h1>
                 </div>
-                <div className={`${viewDetail ? 'flex' : 'hidden'} md:hidden justify-center mt-3 gap-x-2`}>
+                <div className={`${viewDetail === items ? 'flex' : 'hidden'} md:hidden justify-center pt-3 gap-x-2 bg-slate-50`}>
                   {items.facilities.map((elements) => (elements == 'baggage' ? <img src='/icon/luggage.svg' alt='luggage' key={items.code} /> : null))}
                   {items.facilities.map((elements) => (elements == 'meal' ? <img src='/icon/meal.svg' alt='meal' key={items.code} /> : null))}
                   {items.facilities.map((elements) => (elements == 'wifi' ? <img src='/icon/wifi.svg' alt='wifi' key={items.code} /> : null))}
                 </div>
-                <div className={`${viewDetail ? 'flex' : 'hidden'} md:hidden justify-center mt-3`}>
+                <div className={`${viewDetail === items ? 'flex' : 'hidden'} md:hidden justify-center pt-3 bg-slate-50 rounded-b-xl pb-3`}>
                   <h1 className='text-blue text-[16px] font-medium'>{format(items.price)}</h1>
                   <h1 className='text-[#979797] text-[14px] font-medium'>/pax</h1>
                 </div>
