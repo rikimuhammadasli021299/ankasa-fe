@@ -50,7 +50,9 @@ export default function Navbar() {
               </div>
             </div>
             <div className='hidden md:flex'>
-              <button className='w-[150px] h-[50px] bg-blue text-white text-[16px] font-semibold rounded-[10px] shadow-[0_8px_10px_0_rgba(35,149,255,0.30)]'>Sign Up</button>
+              <Link href={'/auth/register'} className='flex justify-center items-center w-[150px] h-[50px] bg-blue text-white text-[16px] font-semibold rounded-[10px] shadow-[0_8px_10px_0_rgba(35,149,255,0.30)]'>
+                Sign Up
+              </Link>
             </div>
             <div className='md:hidden flex items-center'>
               <button className='inline-flex items-center justify-center p-2 rounded-md text-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500' onClick={toggleNavbar}>
@@ -82,7 +84,9 @@ export default function Navbar() {
               >
                 My Booking
               </Link>
-              <button className='mx-3 p-2 block bg-blue text-white text-[15px] font-semibold rounded-[10px] shadow-[0_8px_10px_0_rgba(35,149,255,0.30)]'>Sign Up</button>
+              <Link href={'/auth/register'} className='w-[100px] h-[35px] mx-3 p-2 flex justify-center items-center bg-blue text-white text-[15px] font-semibold rounded-[10px] shadow-[0_8px_10px_0_rgba(35,149,255,0.30)]'>
+                Sign Up
+              </Link>
             </div>
           </div>
         )}
