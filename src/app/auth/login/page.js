@@ -26,7 +26,9 @@ export default function Login() {
                   <img src='/icon/eye-slash-visible.svg' width={30} height={30} alt='eye' className='absolute right-0 top-[13px] z-10' onClick={() => setShowPassword(!showPassword)} />
                 )}
               </div>
-              <button className='bg-blue w-full py-3 text-white text-[18px] font-bold rounded-[10px]'>Sign In</button>
+              <button className='bg-blue hover:bg-white w-full py-3 text-white hover:text-[#2395FF] text-[18px] font-bold rounded-[10px] hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'>
+                Sign In
+              </button>
               <div className='flex flex-col self-center justify-center pt-4 gap-y-1'>
                 <h1 className='text-[#595959] text-center text-[16px] font-normal'>Did you forgot your password?</h1>
                 <Link href={'/auth/forgot-password'} className='text-blue text-[16px] text-center font-normal underline'>

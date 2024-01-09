@@ -239,7 +239,7 @@ export default function FindTicket() {
               </div>
             </div>
           </div>
-          <button className='text-white text-[16px] font-semibold z-10' onClick={changeSearch}>
+          <button className='text-white hover:text-[#000] text-[16px] font-semibold z-10' onClick={changeSearch}>
             Change Search
           </button>
         </div>
@@ -250,10 +250,10 @@ export default function FindTicket() {
       <div className='max-w-[1366px] flex mx-auto pt-8 bg-[#F5F6FA]'>
         <div className='flex flex-col w-[30%]'>
           <div className='flex flex-wrap justify-between items-center px-4 sm:px-6 lg:px-8'>
-            <h1 className='text-[#000] text-[16px] md:text-[24px] font-semibold' onClick={() => setExpanded((curr) => !curr)}>
+            <h1 className='text-[#000] hover:text-[#2395FF] text-[16px] md:text-[24px] font-semibold cursor-pointer' onClick={() => setExpanded((curr) => !curr)}>
               Filter
             </h1>
-            <h1 className='text-blue text-[12px] md:text-[16px] font-semibold' onClick={handleResetFilter}>
+            <h1 className='text-blue hover:text-[#000] text-[12px] md:text-[16px] font-semibold cursor-pointer' onClick={handleResetFilter}>
               Reset
             </h1>
           </div>
@@ -273,7 +273,7 @@ export default function FindTicket() {
           <div className='border-b border-[#E5E5E5] mb-5'>
             <div className='flex justify-between items-center mb-5'>
               <h1 className='text-[#000] text-[16px] font-semibold'>Transit</h1>
-              <img src={`${filterTransit ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} onClick={() => setFilterTransit(!filterTransit)} alt='arrow' />
+              <img src={`${filterTransit ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} className='cursor-pointer' onClick={() => setFilterTransit(!filterTransit)} alt='arrow' />
             </div>
             <div className={`${filterTransit ? 'flex' : 'hidden'} justify-between items-center mb-3`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>Direct</h1>
@@ -291,7 +291,7 @@ export default function FindTicket() {
           <div className='border-b border-[#E5E5E5] mb-5'>
             <div className='flex justify-between items-center mb-5'>
               <h1 className='text-[#000] text-[16px] font-semibold'>Facilities</h1>
-              <img src={`${filterFacilities ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} onClick={() => setFilterFacilities(!filterFacilities)} alt='arrow' />
+              <img src={`${filterFacilities ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} className='cursor-pointer' onClick={() => setFilterFacilities(!filterFacilities)} alt='arrow' />
             </div>
             <div className={`${filterFacilities ? 'flex' : 'hidden'} justify-between items-center mb-3`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>Luggage</h1>
@@ -309,7 +309,7 @@ export default function FindTicket() {
           <div className='border-b border-[#E5E5E5] mb-5'>
             <div className='flex justify-between items-center mb-5'>
               <h1 className='text-[#000] text-[16px] font-semibold'>Departure Time</h1>
-              <img src={`${filterDeparture ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} onClick={() => setFilterDeparture(!filterDeparture)} alt='arrow' />
+              <img src={`${filterDeparture ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} className='cursor-pointer' onClick={() => setFilterDeparture(!filterDeparture)} alt='arrow' />
             </div>
             <div className={`${filterDeparture ? 'flex' : 'hidden'} justify-between items-center mb-3`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>00:00 - 06:00</h1>
@@ -331,7 +331,7 @@ export default function FindTicket() {
           <div className='border-b border-[#E5E5E5] mb-5'>
             <div className='flex justify-between items-center mb-5'>
               <h1 className='text-[#000] text-[16px] font-semibold'>Time Arrived</h1>
-              <img src={`${filterArrived ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} onClick={() => setFilterArrived(!filterArrived)} alt='arrow' />
+              <img src={`${filterArrived ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} className='cursor-pointer' onClick={() => setFilterArrived(!filterArrived)} alt='arrow' />
             </div>
             <div className={`${filterArrived ? 'flex' : 'hidden'} justify-between items-center mb-3`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>00:00 - 06:00</h1>
@@ -353,7 +353,7 @@ export default function FindTicket() {
           <div className='border-b border-[#E5E5E5] mb-5'>
             <div className='flex justify-between items-center mb-5'>
               <h1 className='text-[#000] text-[16px] font-semibold'>Airlines</h1>
-              <img src={`${filterAirlines ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} onClick={() => setFilterAirlines(!filterAirlines)} alt='arrow' />
+              <img src={`${filterAirlines ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} className='cursor-pointer' onClick={() => setFilterAirlines(!filterAirlines)} alt='arrow' />
             </div>
             <div className={`${filterAirlines ? 'flex' : 'hidden'} justify-between items-center mb-3`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>Garuda Indonesia</h1>
@@ -379,7 +379,7 @@ export default function FindTicket() {
           <div className='mb-5 border-[#E5E5E5] border-b'>
             <div className='flex justify-between items-center mb-5'>
               <h1 className='text-[#000] text-[16px] font-semibold'>Ticket Price</h1>
-              <img src={`${filterTicket ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} onClick={() => setFilterTicket(!filterTicket)} alt='arrow' />
+              <img src={`${filterTicket ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} className='cursor-pointer' onClick={() => setFilterTicket(!filterTicket)} alt='arrow' />
             </div>
             <div className={`${filterTicket ? 'flex' : 'hidden'} justify-between items-center mb-7`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>Lowest</h1>
@@ -393,7 +393,10 @@ export default function FindTicket() {
               <h1 className='text-[16px] font-semibold text-blue'>{format(maxPrice)}</h1>
             </div>
           </div>
-          <div className='flex bg-blue mx-auto w-[50%] p-1 justify-center items-center rounded-md text-white text-[14px] font-medium hover:bg-slate-300 hover:text-black hover:cursor-pointer' onClick={handleSetFilter}>
+          <div
+            className='flex bg-blue hover:bg-[#FFF] mx-auto w-[50%] p-1 justify-center items-center rounded-md text-white hover:text-[#2395FF] text-[14px] font-medium hover:cursor-pointer hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'
+            onClick={handleSetFilter}
+          >
             Set Filter
           </div>
         </div>
@@ -469,7 +472,10 @@ export default function FindTicket() {
                   </div>
                   {/* Button start */}
                   <div className='flex justify-center w-[150px]'>
-                    <Link href={'/flight-details'} className='bg-blue py-[13px] px-[50px] text-white text-[16px] font-bold rounded-[10px] shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)]'>
+                    <Link
+                      href={'/flight-details'}
+                      className='bg-blue hover:bg-[white] py-[13px] px-[50px] text-white hover:text-[#2395FF] text-[16px] font-bold rounded-[10px] hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'
+                    >
                       Select
                     </Link>
                   </div>
@@ -477,7 +483,7 @@ export default function FindTicket() {
                 </div>
                 <div className='flex justify-center md:justify-start mt-7 gap-x-2'>
                   <h1 className='text-blue text-[16px] font-semibold'>View Details</h1>
-                  <img src={`${viewDetail === items ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} onClick={() => handleViewDetail(items)} alt='arrow' />
+                  <img src={`${viewDetail === items ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'}`} onClick={() => handleViewDetail(items)} alt='arrow' className='cursor-pointer' />
                 </div>
                 <div className={`${viewDetail === items ? 'flex' : 'hidden'} flex-col md:flex-row items-center mt-3 bg-slate-50 shadow-none md:shadow-md rounded-t-xl md:rounded-xl`}>
                   <div className='flex w-full md:w-[45%] p-3 justify-center '>

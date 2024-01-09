@@ -27,7 +27,9 @@ export default function Register() {
                   <img src='/icon/eye-slash-visible.svg' width={30} height={30} alt='eye' className='absolute right-0 top-[13px] z-10' onClick={() => setShowPassword(!showPassword)} />
                 )}
               </div>
-              <button className='bg-blue w-full py-3 text-white text-[18px] font-bold rounded-[10px]'>Sign Up</button>
+              <button className='bg-blue hover:bg-white w-full py-3 text-white hover:text-[#2395FF] text-[18px] font-bold rounded-[10px] hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'>
+                Sign Up
+              </button>
               <div className='flex gap-x-4'>
                 <input type='checkbox' className='w-[20px]' />
                 <h1 className='text-[#595959] text-[16px] font-normal'>Accept terms and condition</h1>
@@ -35,8 +37,8 @@ export default function Register() {
               <div className='flex w-[85%] self-center justify-center pt-4 border-t-2'>
                 <h1 className='text-[#4D4D4D] text-[14px] font-normal'>Already have an account?</h1>
               </div>
-              <Link href={'/auth/login'} className='flex border border-[#2395ff] rounded-[10px] py-3 justify-center'>
-                <h1 className='text-blue text-[18px] font-bold'>Sign In</h1>
+              <Link href={'/auth/login'} className='flex border border-[#2395ff] hover:bg-[#2395FF] text-blue hover:text-white rounded-[10px] py-3 justify-center hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)]'>
+                <h1 className='text-[18px] font-bold'>Sign In</h1>
               </Link>
             </div>
           </form>

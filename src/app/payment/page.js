@@ -154,7 +154,7 @@ export default function Payment() {
                     <h1 className='text-[#000] font-medium'>Pro(Billed Monthly)</h1>
                     <img src='/icon/triangle.svg' alt='triangle' className='w-[10px] h-[10px] object-cover rotate-180' />
                   </div>
-                  <h1 className='text-blue text-[10px] font-normal underline'>Save 20% with annual billing</h1>
+                  <h1 className='text-blue text-[10px] font-normal underline cursor-pointer'>Save 20% with annual billing</h1>
                 </div>
                 <h1 className='text-[#000] font-medium text-[20px]'>
                   $9.99<span className='text-secondary text-[8px]'>/month</span>
@@ -181,10 +181,10 @@ export default function Payment() {
               </div>
               <h1 className='text-secondary text-[12px] font-normal'>After 30 days $9.59</h1>
             </div>
-            <div className='flex justify-center bg-blue mt-5 rounded-md py-3'>
-              <h1 className='text-white text-[12px] font-light'>Try it free for 30 days</h1>
+            <div className='flex justify-center bg-blue hover:bg-[white] text-white hover:text-[#2395FF] mt-5 rounded-md py-3 hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF] cursor-pointer'>
+              <h1 className='text-[12px] font-light'>Try it free for 30 days</h1>
             </div>
-            <h1 className='text-blue underline text-center text-[12px] font-light mt-1'>Have a promo code?</h1>
+            <h1 className='text-blue underline text-center text-[12px] font-light mt-1 cursor-pointer'>Have a promo code?</h1>
           </div>
         </div>
       </div>

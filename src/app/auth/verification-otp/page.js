@@ -15,7 +15,10 @@ export default function VerificationOtp() {
               <h1 className='text-[#000] text-[35px] font-semibold'>Verification OTP</h1>
               <input type='email' className='outline-none focus:outline-none border-b-[2px] focus:border-[#2395ff] text-[16px] font-normal text-primary p-3' placeholder='Email' />
               <input type='text' className='outline-none focus:outline-none border-b-[2px] focus:border-[#2395ff] text-[16px] font-normal text-primary p-3' placeholder='OTP' />
-              <button href={'/auth/verification-otp'} className='bg-blue w-full py-3 flex justify-center text-white text-[18px] font-bold rounded-[10px]'>
+              <button
+                href={'/auth/verification-otp'}
+                className='bg-blue hover:bg-white w-full py-3 flex justify-center text-white hover:text-[#2395FF] text-[18px] font-bold rounded-[10px] hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'
+              >
                 Verif
               </button>
             </div>

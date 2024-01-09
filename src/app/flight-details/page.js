@@ -3,9 +3,12 @@ import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import { useRef, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function FlightDetails() {
+  const router = useRouter();
   const refLabelFullName = useRef(null);
+  const refLabelFullNameContact = useRef(null);
   const refLabelEmail = useRef(null);
   const refLabelPhoneNumber = useRef(null);
   const refCardPhoneNumber = useRef(null);
@@ -25,6 +28,14 @@ export default function FlightDetails() {
   const onBlurInputFullName = () => {
     const labelFullName = refLabelFullName.current;
     labelFullName.className = 'text-[#9B96AB] text-[14px] font-normal';
+  };
+  const onFocusInputFullNameContact = () => {
+    const labelFullNameContact = refLabelFullNameContact.current;
+    labelFullNameContact.className = 'text-[#000] text-[14px] font-normal';
+  };
+  const onBlurInputFullNameContact = () => {
+    const labelFullNameContact = refLabelFullNameContact.current;
+    labelFullNameContact.className = 'text-[#9B96AB] text-[14px] font-normal';
   };
   const onFocusInputEmail = () => {
     const labelEmail = refLabelEmail.current;
@@ -114,7 +125,7 @@ export default function FlightDetails() {
                   <option value='+65'>+65</option>
                   <option value='+60'>+60</option>
                 </select>
-                <input type='number' className='text-[16px] text-[#000] font-normal w-full px-3 outline-none focus:outline-none' onFocus={onFocusInputPhoneNumber} onBlur={onBlurInputPhoneNumber} />
+                <input type='text' className='text-[16px] text-[#000] font-normal w-full px-3 outline-none focus:outline-none' onFocus={onFocusInputPhoneNumber} onBlur={onBlurInputPhoneNumber} />
               </div>
               <div className='flex px-5 py-3 mt-9 mb-[18px] rounded-[10px] items-center gap-x-3 bg-[rgba(242,69,69,0.10)]'>
                 <img src='icon/warning.svg' alt='warning' />
@@ -142,15 +153,15 @@ export default function FlightDetails() {
                   <option value='Mrs.'>Mrs.</option>
                 </select>
               </div>
-              <h1 ref={refLabelFullName} className='text-[#9B96AB] text-[14px] font-normal'>
+              <h1 ref={refLabelFullNameContact} className='text-[#9B96AB] text-[14px] font-normal'>
                 Full Name
               </h1>
               <input
                 type='text'
                 value={toggleSameContact ? fullname : fullnameSameAsContact}
                 className='w-full border-b-2 outline-none focus:border-b-[#2395ff] text-[16px] text-[#000] font-normal py-2'
-                onFocus={onFocusInputFullName}
-                onBlur={onBlurInputFullName}
+                onFocus={onFocusInputFullNameContact}
+                onBlur={onBlurInputFullNameContact}
                 onChange={(e) => (toggleSameContact ? null : setFullnameSameAsContact(e.target.value))}
               />
               <h1 ref={refLabelNationality} className='text-[#9B96AB] text-[14px] font-normal mt-5'>
@@ -176,16 +187,19 @@ export default function FlightDetails() {
                   <div className={`relative cursor-pointer w-[17px] h-[17px] border-2 border-[#2395ff] ${checked ? 'bg-blue' : null} rounded-[3px]`} onClick={onCheck}>
                     <img src='/icon/icon-check.svg' alt='check' width={15} height={15} className={`absolute opacity-0 ${checked ? 'opacity-100' : 'opacity-0'} z-50`} onClick={onCheck} />
                   </div>
-                  <h1 className='text-[#000] text-[18px] font-semibold'>Travel Insurance</h1>
+                  <h1 className='text-[#000] md:text-[18px] text-[14px] font-semibold'>Travel Insurance</h1>
                 </div>
-                <h1 className='text-blue text-[18px] font-bold'>
-                  $ 2.00 <span className='text-[#979797] text-[14px] font-semibold'>/pax</span>
+                <h1 className='text-blue md:text-[18px] text-[14px] font-bold'>
+                  $ 2.00 <span className='text-[#979797] md:text-[14px] text-[12px] font-semibold'>/pax</span>
                 </h1>
               </div>
-              <h1 className='text-[#000] px-6 text-[14px] font-normal mt-5'>Get travel compensation up to $ 10.000,00</h1>
+              <h1 className='text-[#000] px-6 text-[14px] text-center md:text-start font-normal mt-5'>Get travel compensation up to $ 10.000,00</h1>
             </div>
-            <div className='flex mx-auto my-[40px] justify-center w-[278px] bg-blue rounded-[10px] px-3 py-3 shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)]'>
-              <Link href={'/payment'} className='text-[#FFF] text-[18px] font-bold'>
+            <div
+              onClick={() => router.push('/payment')}
+              className='flex mx-auto my-[40px] justify-center w-[278px] bg-blue hover:bg-white text-[#FFF] hover:text-[#2395FF] cursor-pointer rounded-[10px] px-3 py-3 hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'
+            >
+              <Link href={'/payment'} className='text-[18px] font-bold'>
                 Proceed to Payment
               </Link>
             </div>

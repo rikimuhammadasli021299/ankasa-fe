@@ -1,10 +1,13 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import {} from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function Navbar() {
+  const router = useRouter();
   const [isClick, setIsClick] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
   const pathname = usePathname();
 
   const toggleNavbar = () => {
@@ -17,7 +20,7 @@ export default function Navbar() {
           <div className='flex items-center justify-between h-16'>
             <div className='flex items-center'>
               <div className='flex'>
-                <img src='/icon/logo.svg' alt='logo' />
+                <img src='/icon/logo.svg' alt='logo' className='cursor-pointer' onClick={() => router.push('/')} />
                 <Link href={'/'} className='block py-6 text-[24px] text-[#414141] font-semibold ms-3'>
                   Ankasa
                 </Link>
@@ -34,7 +37,7 @@ export default function Navbar() {
                     href={'/find-ticket'}
                     className={`mx-8 flex py-2 text-primary hover:text-white hover:bg-[#2395ff] lg:mx-6 xl:mx-8 hover:rounded-lg p-2 ${
                       pathname === '/find-ticket' || pathname === '/flight-details' ? 'border-b-4 border-[#2395ff] font-bold' : 'font-medium'
-                    }`}
+                    } hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)]`}
                   >
                     Find Ticket
                   </Link>
@@ -42,17 +45,30 @@ export default function Navbar() {
                     href={'/my-booking'}
                     className={`mx-8 flex py-2 text-primary hover:text-white hover:bg-[#2395ff] lg:mx-6 xl:mx-8 hover:rounded-lg p-2 ${
                       pathname === '/my-booking' || pathname === '/payment' || pathname === '/booking-pass' ? 'border-b-4 border-[#2395ff] font-bold' : 'font-medium'
-                    }`}
+                    } hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)]`}
                   >
                     My Booking
                   </Link>
                 </div>
               </div>
             </div>
-            <div className='hidden md:flex'>
-              <Link href={'/auth/register'} className='flex justify-center items-center w-[150px] h-[50px] bg-blue text-white text-[16px] font-semibold rounded-[10px] shadow-[0_8px_10px_0_rgba(35,149,255,0.30)]'>
-                Sign Up
-              </Link>
+            <div className='hidden md:flex w-[150px]'>
+              {isLogin ? (
+                <div className='flex w-full justify-between'>
+                  <img src='/icon/mail.svg' alt='mail' />
+                  <img src='/icon/notifications.svg' alt='notifications' />
+                  <div className='flex w-[50px] h-[50px] items-center justify-center rounded-full border-[2px] border-[#2395FF] overflow-hidden'>
+                    <img src='/image/user-2.png' alt='user' className='w-[40px] h-[40px] object-cover rounded-full' />
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  href={'/auth/register'}
+                  className='flex justify-center items-center w-[150px] h-[50px] bg-blue hover:bg-[white] text-white hover:text-[#2395FF] text-[16px] font-semibold rounded-[10px] hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'
+                >
+                  Sign Up
+                </Link>
+              )}
             </div>
             <div className='md:hidden flex items-center'>
               <button className='inline-flex items-center justify-center p-2 rounded-md text-primary hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500' onClick={toggleNavbar}>
@@ -84,9 +100,19 @@ export default function Navbar() {
               >
                 My Booking
               </Link>
-              <Link href={'/auth/register'} className='w-[100px] h-[35px] mx-3 p-2 flex justify-center items-center bg-blue text-white text-[15px] font-semibold rounded-[10px] shadow-[0_8px_10px_0_rgba(35,149,255,0.30)]'>
-                Sign Up
-              </Link>
+              {isLogin ? (
+                <div className='flex justify-between w-[150px] ml-4'>
+                  <div className='flex w-[50px] h-[50px] items-center justify-center rounded-full border-[2px] border-[#2395FF] overflow-hidden'>
+                    <img src='/image/user-2.png' alt='user' className='w-[40px] h-[40px] object-cover rounded-full' />
+                  </div>
+                  <img src='/icon/mail.svg' alt='mail' />
+                  <img src='/icon/notifications.svg' alt='notifications' />
+                </div>
+              ) : (
+                <Link href={'/auth/register'} className='w-[100px] h-[35px] mx-3 p-2 flex justify-center items-center bg-blue text-white text-[15px] font-semibold rounded-[10px] shadow-[0_8px_10px_0_rgba(35,149,255,0.30)]'>
+                  Sign Up
+                </Link>
+              )}
             </div>
           </div>
         )}
