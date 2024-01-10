@@ -4,9 +4,12 @@ import Navbar from '../components/Navbar';
 import { useEffect, useState } from 'react';
 import RangeSlider from '../components/RangeSlider';
 import axios from 'axios';
-import Link from 'next/link';
+// import Link from 'next/link';
+const base_url = process.env.NEXT_PUBLIC_API_LINK;
+import { useRouter } from 'next/navigation';
 
 export default function FindTicket() {
+  const router = useRouter();
   const [expanded, setExpanded] = useState(true);
   const [filterTransit, setFilterTransit] = useState(false);
   const [filterFacilities, setFilterFacilities] = useState(false);
@@ -46,7 +49,7 @@ export default function FindTicket() {
 
   const getAllFlight = async () => {
     try {
-      const res = await axios.get('https://easy-lime-seal-toga.cyclic.app/airlines/flight');
+      const res = await axios.get(base_url + '/airlines/flight');
       setDataAllFlights(res.data.data);
       setFilteredFlightByLocation(res.data.data);
     } catch (error) {
@@ -472,12 +475,12 @@ export default function FindTicket() {
                   </div>
                   {/* Button start */}
                   <div className='flex justify-center w-[150px]'>
-                    <Link
-                      href={'/flight-details'}
+                    <button
+                      onClick={() => router.push(`/find-ticket/${items.code}`)}
                       className='bg-blue hover:bg-[white] py-[13px] px-[50px] text-white hover:text-[#2395FF] text-[16px] font-bold rounded-[10px] hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'
                     >
                       Select
-                    </Link>
+                    </button>
                   </div>
                   {/* Button end */}
                 </div>

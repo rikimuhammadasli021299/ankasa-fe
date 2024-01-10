@@ -1,14 +1,20 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
-import {} from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { getCookie } from 'cookies-next';
 
 export default function Navbar() {
   const router = useRouter();
   const [isClick, setIsClick] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(null);
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (getCookie('access_token')) {
+      setIsLogin(getCookie('access_token'));
+    }
+  }, []);
 
   const toggleNavbar = () => {
     setIsClick(!isClick);
@@ -57,7 +63,7 @@ export default function Navbar() {
                 <div className='flex w-full justify-between'>
                   <img src='/icon/mail.svg' alt='mail' />
                   <img src='/icon/notifications.svg' alt='notifications' />
-                  <div className='flex w-[50px] h-[50px] items-center justify-center rounded-full border-[2px] border-[#2395FF] overflow-hidden'>
+                  <div onClick={() => router.push('/profile')} className='flex w-[50px] h-[50px] items-center justify-center rounded-full border-[2px] border-[#2395FF] overflow-hidden cursor-pointer'>
                     <img src='/image/user-2.png' alt='user' className='w-[40px] h-[40px] object-cover rounded-full' />
                   </div>
                 </div>
@@ -102,7 +108,7 @@ export default function Navbar() {
               </Link>
               {isLogin ? (
                 <div className='flex justify-between w-[150px] ml-4'>
-                  <div className='flex w-[50px] h-[50px] items-center justify-center rounded-full border-[2px] border-[#2395FF] overflow-hidden'>
+                  <div onClick={() => router.push('/profile')} className='flex w-[50px] h-[50px] items-center justify-center rounded-full border-[2px] border-[#2395FF] overflow-hidden cursor-pointer'>
                     <img src='/image/user-2.png' alt='user' className='w-[40px] h-[40px] object-cover rounded-full' />
                   </div>
                   <img src='/icon/mail.svg' alt='mail' />

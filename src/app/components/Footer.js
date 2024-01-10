@@ -23,15 +23,15 @@ function Footer() {
         <div className='flex w-full md:w-1/2 md:justify-end'>
           <div className='flex w-1/2 md:w-2/3 flex-col'>
             <h1 className='text-[#000] mt-2 mb-3 text-[16px] font-medium ms-[11px]'>Download Angkasa App</h1>
-            <img src='./image/download-app.png' alt='' width={200} height={60} />
+            <img src='/image/download-app.png' alt='' width={200} height={60} />
           </div>
           <div className='flex flex-col ps-[32px] md:ps-0'>
             <h1 className='text-[#000] mt-2 mb-3 text-[16px] font-medium block'>Follow Us</h1>
             <div className='flex flex-wrap mt-2 gap-5'>
-              <img src='./icon/facebook.svg' alt='facebook' />
-              <img src='./icon/twitter.svg' alt='twitter' />
-              <img src='./icon/instagram.svg' alt='instagram' />
-              <img src='./icon/youtube.svg' alt='youtube' />
+              <img src='/icon/facebook.svg' alt='facebook' />
+              <img src='/icon/twitter.svg' alt='twitter' />
+              <img src='/icon/instagram.svg' alt='instagram' />
+              <img src='/icon/youtube.svg' alt='youtube' />
             </div>
           </div>
         </div>
@@ -39,7 +39,7 @@ function Footer() {
       <div className='flex justify-between flex-col md:flex-row mt-8'>
         <p className='text-secondary text-[14px] font-normal ms-3 md:ms-0'>© Ankasa. All Rights Reserved.</p>
         <div className='flex mt-3 mb-8 md:mt-0'>
-          <img src='./icon/map-pin.svg' alt='location' className='ms-2 md:ms-0' />
+          <img src='/icon/map-pin.svg' alt='location' className='ms-2 md:ms-0' />
           <p className='text-secondary text-[14px] font-normal ms-2'>Jakarta, Indonesia</p>
         </div>
       </div>

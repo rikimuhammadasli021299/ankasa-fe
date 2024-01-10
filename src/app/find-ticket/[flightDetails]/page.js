@@ -1,11 +1,17 @@
 'use client';
-import Footer from '../components/Footer';
-import Navbar from '../components/Navbar';
-import { useRef, useState } from 'react';
+import Navbar from '@/app/components/Navbar';
+import Footer from '@/app/components/Footer';
+import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+import { getCookie } from 'cookies-next';
+const base_url = process.env.NEXT_PUBLIC_API_LINK;
 
-export default function FlightDetails() {
+export default function FlightDetails(props) {
+  const idFlight = props.params.flightDetails;
+  const token = getCookie('access_token');
   const router = useRouter();
   const refLabelFullName = useRef(null);
   const refLabelFullNameContact = useRef(null);
@@ -19,7 +25,130 @@ export default function FlightDetails() {
   const [checked, setChecked] = useState(false);
   const [toggleSameContact, setToggleSameContact] = useState(false);
   const [fullname, setFullname] = useState();
+  const [email, setEmail] = useState();
+  const [codePhone, setCodePhone] = useState();
+  const [phoneNumber, setPhoneNumber] = useState();
+  const [title, setTitle] = useState();
+  const [nationality, setNationality] = useState();
   const [fullnameSameAsContact, setFullnameSameAsContact] = useState();
+  const [dataDetailFlight, setDataDetailFlight] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    getDataDetailFlight();
+  }, []);
+
+  const getDataDetailFlight = async () => {
+    try {
+      const res = await axios.get(base_url + '/airlines/flight/' + idFlight);
+      console.log(res.data.data);
+      setDataDetailFlight(res.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleProceedPayment = async (e) => {
+    e.preventDefault();
+    setIsLoading(!isLoading);
+    if (!fullname || !fullnameSameAsContact) {
+      return Swal.fire({
+        title: 'Failed!',
+        text: 'Fullname required',
+        icon: 'error',
+      });
+    }
+    if (!email) {
+      return Swal.fire({
+        title: 'Failed!',
+        text: 'Email required',
+        icon: 'error',
+      });
+    }
+    if (!phoneNumber || !codePhone) {
+      return Swal.fire({
+        title: 'Failed!',
+        text: 'Phone Number required',
+        icon: 'error',
+      });
+    }
+    if (!title) {
+      return Swal.fire({
+        title: 'Failed!',
+        text: 'Title required',
+        icon: 'error',
+      });
+    }
+    if (!nationality) {
+      return Swal.fire({
+        title: 'Failed!',
+        text: 'Nationality required',
+        icon: 'error',
+      });
+    }
+    const formInput = {
+      title,
+      fullname: `${toggleSameContact ? fullname : fullnameSameAsContact}`,
+      nationality,
+    };
+    console.log(formInput);
+
+    if (isLoading) {
+      Swal.fire({
+        title: 'Booking ticket...',
+        html: 'Please wait...',
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+    }
+    try {
+      const res = await axios.post(base_url + '/booking/tickets/' + idFlight, formInput, {
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res.data.data.message);
+      Swal.fire({
+        title: 'Success!',
+        text: 'Booking ticket successful, waiting for payment!',
+        icon: 'success',
+      });
+
+      router.push('/payment');
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        title: 'Failed!',
+        text: error.response.data.message,
+        icon: 'error',
+      });
+    } finally {
+      setIsLoading(!isLoading);
+    }
+  };
+
+  const { format } = new Intl.NumberFormat('en-us', {
+    style: 'currency',
+    currency: 'USD',
+  });
+
+  const formatTime = (dateTimeString) => {
+    const dateTime = new Date(dateTimeString);
+    const hours = dateTime.getHours();
+    const minutes = dateTime.getMinutes();
+    return `${hours}:${minutes < 10 ? '0' : ''}${minutes}`;
+  };
+  const formatDate = (dateTimeString) => {
+    const dateTime = new Date(dateTimeString);
+    const day = dateTime.getDate();
+    const month = dateTime.getMonth();
+    const year = dateTime.getFullYear();
+    return `${day}/${month < 10 ? '0' : ''}${month + 1}/${year}`;
+  };
 
   const onFocusInputFullName = () => {
     const labelFullName = refLabelFullName.current;
@@ -101,7 +230,6 @@ export default function FlightDetails() {
               </h1>
               <input
                 type='text'
-                value={fullname}
                 className='w-full border-b-2 outline-none focus:border-b-[#2395ff] text-[16px] text-[#000] font-normal py-2'
                 onFocus={onFocusInputFullName}
                 onBlur={onBlurInputFullName}
@@ -110,12 +238,18 @@ export default function FlightDetails() {
               <h1 ref={refLabelEmail} className='text-[#9B96AB] text-[14px] font-normal mt-5'>
                 Email
               </h1>
-              <input type='email' className='w-full border-b-2 outline-none focus:border-b-[#2395ff] text-[16px] text-[#000] font-normal py-2' onFocus={onFocusInputEmail} onBlur={onBlurInputEmail} />
+              <input
+                onChange={(e) => setEmail(e.target.value)}
+                type='email'
+                className='w-full border-b-2 outline-none focus:border-b-[#2395ff] text-[16px] text-[#000] font-normal py-2'
+                onFocus={onFocusInputEmail}
+                onBlur={onBlurInputEmail}
+              />
               <h1 ref={refLabelPhoneNumber} className='text-[#9B96AB] text-[14px] font-normal mt-5'>
                 Phone Number
               </h1>
               <div ref={refCardPhoneNumber} className='flex w-full border-b-2 pt-3'>
-                <select className='outline-none focus:outline-none' onFocus={onFocusInputPhoneNumber} onBlur={onBlurInputPhoneNumber}>
+                <select onChange={(e) => setCodePhone(e.target.value)} className='outline-none focus:outline-none' onFocus={onFocusInputPhoneNumber} onBlur={onBlurInputPhoneNumber}>
                   <option value='+62'>+62</option>
                   <option value='+1'>+1</option>
                   <option value='+33'>+33</option>
@@ -125,10 +259,16 @@ export default function FlightDetails() {
                   <option value='+65'>+65</option>
                   <option value='+60'>+60</option>
                 </select>
-                <input type='text' className='text-[16px] text-[#000] font-normal w-full px-3 outline-none focus:outline-none' onFocus={onFocusInputPhoneNumber} onBlur={onBlurInputPhoneNumber} />
+                <input
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  type='text'
+                  className='text-[16px] text-[#000] font-normal w-full px-3 outline-none focus:outline-none'
+                  onFocus={onFocusInputPhoneNumber}
+                  onBlur={onBlurInputPhoneNumber}
+                />
               </div>
               <div className='flex px-5 py-3 mt-9 mb-[18px] rounded-[10px] items-center gap-x-3 bg-[rgba(242,69,69,0.10)]'>
-                <img src='icon/warning.svg' alt='warning' />
+                <img src='/icon/warning.svg' alt='warning' />
                 <h1 className='text-[#595959] text-[14px] font-normal'>Make sure the customer data is correct.</h1>
               </div>
             </div>
@@ -148,9 +288,9 @@ export default function FlightDetails() {
                 Title
               </h1>
               <div ref={refCardTitle} className='flex w-full border-b-2 pt-3 mb-5'>
-                <select className='outline-none focus:outline-none' onFocus={onFocusInputTitle} onBlur={onBlurInputTitle}>
-                  <option value='Mr.'>Mr.</option>
-                  <option value='Mrs.'>Mrs.</option>
+                <select onChange={(e) => setTitle(e.target.value)} className='outline-none focus:outline-none' onFocus={onFocusInputTitle} onBlur={onBlurInputTitle}>
+                  <option value='mr'>Mr.</option>
+                  <option value='ms'>Ms.</option>
                 </select>
               </div>
               <h1 ref={refLabelFullNameContact} className='text-[#9B96AB] text-[14px] font-normal'>
@@ -160,15 +300,16 @@ export default function FlightDetails() {
                 type='text'
                 value={toggleSameContact ? fullname : fullnameSameAsContact}
                 className='w-full border-b-2 outline-none focus:border-b-[#2395ff] text-[16px] text-[#000] font-normal py-2'
+                disabled={toggleSameContact ? true : false}
                 onFocus={onFocusInputFullNameContact}
                 onBlur={onBlurInputFullNameContact}
-                onChange={(e) => (toggleSameContact ? null : setFullnameSameAsContact(e.target.value))}
+                onChange={(e) => setFullnameSameAsContact(e.target.value)}
               />
               <h1 ref={refLabelNationality} className='text-[#9B96AB] text-[14px] font-normal mt-5'>
                 Nationality
               </h1>
               <div ref={refCardNationality} className='flex w-full border-b-2 pt-3 mb-3'>
-                <select className='outline-none focus:outline-none' onFocus={onFocusInputNationality} onBlur={onBlurInputNationality}>
+                <select onChange={(e) => setNationality(e.target.value)} className='outline-none focus:outline-none' onFocus={onFocusInputNationality} onBlur={onBlurInputNationality}>
                   <option value='Australia'>Australia</option>
                   <option value='France'>France</option>
                   <option value='Indonesia'>Indonesia</option>
@@ -196,12 +337,12 @@ export default function FlightDetails() {
               <h1 className='text-[#000] px-6 text-[14px] text-center md:text-start font-normal mt-5'>Get travel compensation up to $ 10.000,00</h1>
             </div>
             <div
-              onClick={() => router.push('/payment')}
+              onClick={(e) => handleProceedPayment(e)}
               className='flex mx-auto my-[40px] justify-center w-[278px] bg-blue hover:bg-white text-[#FFF] hover:text-[#2395FF] cursor-pointer rounded-[10px] px-3 py-3 hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'
             >
-              <Link href={'/payment'} className='text-[18px] font-bold'>
+              <button onClick={(e) => handleProceedPayment(e)} className='text-[18px] font-bold'>
                 Proceed to Payment
-              </Link>
+              </button>
             </div>
           </div>
           <div className='flex flex-col md:w-[40%] lg:w-[30%] w-[320px] z-10'>
@@ -211,19 +352,81 @@ export default function FlightDetails() {
             </div>
             <div className='flex flex-col bg-white w-full rounded-[15px] mt-6 py-7'>
               <div className='flex items-center gap-x-[20px] px-5'>
-                <img src='/image/citilink.png' alt='airlines' className='w-[150px] h-[75px] object-cover' />
-                <h1 className='text-[#595959] text-[16px] font-medium'>Citilink</h1>
+                <img src={dataDetailFlight?.photo} alt='airlines' className='w-[150px] h-[75px] object-cover' />
+                <h1 className='text-[#595959] text-[16px] font-medium'>{dataDetailFlight?.name}</h1>
               </div>
               <div className='flex justify-between mt-[20px] px-5'>
-                <h1 className='text-[#000] text-[18px] font-medium'>Medan (IDN)</h1>
+                <h1 className='text-[#000] text-[18px] font-medium'>
+                  {dataDetailFlight?.from?.location === 'Bali, Indonesia'
+                    ? 'Bali '
+                    : dataDetailFlight?.from?.location === 'Jakarta, Indonesia'
+                    ? 'Jakarta '
+                    : dataDetailFlight?.from?.location === 'Medan, Indonesia'
+                    ? 'Medan '
+                    : dataDetailFlight?.from?.location === 'Paris, France'
+                    ? 'Paris '
+                    : dataDetailFlight?.from?.location === 'New York, USA'
+                    ? 'New York '
+                    : dataDetailFlight?.from?.location === 'London, UK'
+                    ? 'London '
+                    : dataDetailFlight?.from?.location === 'Sydney, Australia'
+                    ? 'Sydney '
+                    : dataDetailFlight?.from?.location}
+                  {dataDetailFlight?.from?.country === 'Indonesia'
+                    ? '(IDN)'
+                    : dataDetailFlight?.from?.country === 'France'
+                    ? '(FRA)'
+                    : dataDetailFlight?.from?.country === 'United States'
+                    ? '(USA)'
+                    : dataDetailFlight?.from?.country === 'United Kingdom'
+                    ? '(UK)'
+                    : dataDetailFlight?.from?.country === 'Australia'
+                    ? '(AUS)'
+                    : dataDetailFlight?.from?.country}
+                </h1>
                 <img src='/icon/one-way-dark.svg' alt='logo' />
-                <h1 className='text-[#000] text-[18px] font-medium'>Tokyo (JPN)</h1>
+                <h1 className='text-[#000] text-[18px] font-medium'>
+                  {dataDetailFlight?.to?.location === 'Bali, Indonesia'
+                    ? 'Bali '
+                    : dataDetailFlight?.to?.location === 'Tokyo, Japan'
+                    ? 'Tokyo '
+                    : dataDetailFlight?.to?.location === 'Singapore'
+                    ? 'Singapore '
+                    : dataDetailFlight?.to?.location === 'Paris, France'
+                    ? 'Paris '
+                    : dataDetailFlight?.to?.location === 'New York, USA'
+                    ? 'New York '
+                    : dataDetailFlight?.to?.location === 'London, UK'
+                    ? 'London '
+                    : dataDetailFlight?.to?.location === 'Kuala Lumpur, Malaysia'
+                    ? 'Kuala Lumpur '
+                    : dataDetailFlight?.to?.location}
+                  {dataDetailFlight?.to?.country === 'Indonesia'
+                    ? '(IDN)'
+                    : dataDetailFlight?.to?.country === 'France'
+                    ? '(FRA)'
+                    : dataDetailFlight?.to?.country === 'United States'
+                    ? '(USA)'
+                    : dataDetailFlight?.to?.country === 'United Kingdom'
+                    ? '(UK)'
+                    : dataDetailFlight?.to?.country === 'Australia'
+                    ? '(AUS)'
+                    : dataDetailFlight?.to?.country === 'Japan'
+                    ? '(JPN)'
+                    : dataDetailFlight?.to?.country === 'Singapore'
+                    ? '(SGP)'
+                    : dataDetailFlight?.to?.country === 'Malaysia'
+                    ? '(MYS)'
+                    : dataDetailFlight?.to?.country}
+                </h1>
               </div>
               <div className='flex gap-x-5 mt-[20px] px-5'>
-                <h1 className='text-[#6B6B6B] text-[12px] font-normal'>Sunday, 15 August 2020</h1>
+                <h1 className='text-[#6B6B6B] text-[12px] font-normal'>{formatDate(dataDetailFlight?.takeoff)}</h1>
                 <div className='flex gap-x-2'>
                   <img src='/icon/ellipse-dark.svg' alt='ellipse' />
-                  <h1 className='text-[#6B6B6B] text-[12px] font-normal'>19:22-21:22</h1>
+                  <h1 className='text-[#6B6B6B] text-[12px] font-normal'>
+                    {formatTime(dataDetailFlight?.takeoff)}-{formatTime(dataDetailFlight?.landing)}
+                  </h1>
                 </div>
               </div>
               <div className='flex items-center gap-x-2 mt-[20px] px-5'>
@@ -238,7 +441,7 @@ export default function FlightDetails() {
                 <div className='flex w-full justify-between items-center px-5'>
                   <h1 className='text-[#000] text-[18px] font-medium'>Total Payments</h1>
                   <div className='flex gap-x-2'>
-                    <h1 className='text-blue md:text-[18px] lg:text-[18px] xl:text-[24px] font-semibold'>$ 145.00</h1>
+                    <h1 className='text-blue md:text-[18px] lg:text-[18px] xl:text-[24px] font-semibold'>{format(dataDetailFlight?.price)}</h1>
                     <img src='/icon/arrow-bottom.svg' alt='arrow' />
                   </div>
                 </div>

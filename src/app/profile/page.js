@@ -2,8 +2,11 @@
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import { useState, useRef } from 'react';
+import { deleteCookie } from 'cookies-next';
+import { useRouter } from 'next/navigation';
 
 export default function Profile() {
+  const router = useRouter();
   const [showMyAccount, setShowMyAccount] = useState(false);
   const wrapperEmailRef = useRef(null);
   const inputEmailRef = useRef(null);
@@ -91,6 +94,15 @@ export default function Profile() {
     labelPostCode.className = 'text-[#9B96AB] text-[14px] font-normal px-[12px]';
   };
 
+  const handleLogout = () => {
+    console.log('logout');
+    deleteCookie('uniqId');
+    deleteCookie('access_token');
+    deleteCookie('name');
+    deleteCookie('email');
+    router.push('/auth/login');
+  };
+
   return (
     <>
       <Navbar />
@@ -135,28 +147,28 @@ export default function Profile() {
               </div>
             </div>
             <div className='flex flex-col w-full mt-[30px] px-[16px]'>
-              <div className='flex w-full justify-between items-center bg-white'>
+              <div className='flex w-full justify-between cursor-pointer items-center bg-white'>
                 <div className='flex items-center'>
                   <img src='/image/profile.png' alt='profile' className='object-cover w-[20px] h-[20px]' />
                   <h1 className='pl-[37px] text-blue text-[14px] font-semibold leading-5'>Profile</h1>
                 </div>
                 <img src='/icon/arrow-right.svg' alt='arrow' />
               </div>
-              <div className='flex w-full justify-between mt-[30px] items-center bg-white'>
+              <div className='flex w-full justify-between cursor-pointer mt-[30px] items-center bg-white'>
                 <div className='flex items-center'>
                   <img src='/icon/star.svg' alt='my-review' />
                   <h1 className='pl-[37px] text-[#000] text-[14px] font-semibold leading-5'>My Review</h1>
                 </div>
                 <img src='/icon/arrow-right-dark.svg' alt='arrow' />
               </div>
-              <div className='flex w-full justify-between mt-[30px] items-center bg-white'>
+              <div className='flex w-full justify-between cursor-pointer mt-[30px] items-center bg-white'>
                 <div className='flex items-center'>
                   <img src='/icon/setting.svg' alt='setting' />
                   <h1 className='pl-[37px] text-[#000] text-[14px] font-semibold leading-5'>Settings</h1>
                 </div>
                 <img src='/icon/arrow-right-dark.svg' alt='arrow' />
               </div>
-              <div className='flex w-full justify-between mt-[30px] items-center bg-white'>
+              <div onClick={handleLogout} className='flex w-full justify-between cursor-pointer mt-[30px] items-center bg-white'>
                 <div className='flex items-center'>
                   <img src='/icon/logout.svg' alt='setting' />
                   <h1 className='pl-[37px] text-[#F24545] text-[14px] font-semibold leading-5'>Logout</h1>
