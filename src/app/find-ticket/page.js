@@ -4,9 +4,8 @@ import Navbar from '../components/Navbar';
 import { useEffect, useState } from 'react';
 import RangeSlider from '../components/RangeSlider';
 import axios from 'axios';
-// import Link from 'next/link';
-const base_url = process.env.NEXT_PUBLIC_API_LINK;
 import { useRouter } from 'next/navigation';
+const base_url = process.env.NEXT_PUBLIC_API_LINK;
 
 export default function FindTicket() {
   const router = useRouter();
@@ -23,20 +22,11 @@ export default function FindTicket() {
   const [dataAllFlights, setDataAllFlights] = useState();
   const [departureCity, setDepartureCity] = useState();
   const [destinationCity, setDestinationCity] = useState();
-  const [filteredFlightByLocation, setFilteredFlightByLocation] = useState();
   const [filteredFlightByTransitDirect, setFilteredFlightByTransitDirect] = useState(false);
   const [filteredFlightByTransitOne, setFilteredFlightByTransitOne] = useState(false);
   const [filteredFlightByTransitMuch, setFilteredFlightByTransitMuch] = useState(false);
-  const [filteredFlightByFacilitiesBagage, setFilteredFlightByFacilitiesBagage] = useState(false);
-  const [filteredFlightByFacilitiesMeal, setFilteredFlightByFacilitiesMeal] = useState(false);
-  const [filteredFlightByFacilitiesWifi, setFilteredFlightByFacilitiesWifi] = useState(false);
-  const [filteredFlightByAirlinesGi, setFilteredFlightByAirlinesGi] = useState(false);
-  const [filteredFlightByAirlinesLa, setFilteredFlightByAirlinesLa] = useState(false);
-  const [filteredFlightByAirlinesCl, setFilteredFlightByAirlinesCl] = useState(false);
-  const [filteredFlightByAirlinesAa, setFilteredFlightByAirlinesAa] = useState(false);
-  const [filteredFlightByAirlinesSa, setFilteredFlightByAirlinesSa] = useState(false);
-
-  const [dataFlightIsFlitered, setDataFlightIsFlitered] = useState();
+  const [filterByFacilities, setFilterByFacilities] = useState([]);
+  const [filterByAirlines, setFilterByAirlines] = useState([]);
 
   const { format } = new Intl.NumberFormat('en-us', {
     style: 'currency',
@@ -45,16 +35,27 @@ export default function FindTicket() {
 
   useEffect(() => {
     getAllFlight();
-  }, []);
+  }, [filterByFacilities, filterByAirlines, minPrice, maxPrice]);
 
   const getAllFlight = async () => {
+    const url = base_url + `/airlines/flight?facilities=${filterByFacilities}&airlineId=${filterByAirlines}&minPrice=${minPrice}&maxPrice=${maxPrice}`;
+    const url2 = base_url + `/airlines/flight-all`;
     try {
-      const res = await axios.get(base_url + '/airlines/flight');
+      const res = await axios.get(url);
       setDataAllFlights(res.data.data);
-      setFilteredFlightByLocation(res.data.data);
     } catch (error) {
       console.log(error.message);
     }
+  };
+
+  const handleChangeFilterByFacilities = (e) => {
+    const { value, checked } = e.target;
+    checked ? setFilterByFacilities((facilities) => [...facilities, value]) : setFilterByFacilities((facilities) => [...facilities.filter((idFacilities) => idFacilities !== value)]);
+  };
+
+  const handleChangeFilterByAirlines = (e) => {
+    const { value, checked } = e.target;
+    checked ? setFilterByAirlines((airlines) => [...airlines, value]) : setFilterByAirlines((airlines) => [...airlines.filter((idAirlines) => idAirlines !== value)]);
   };
 
   // get unique departure city
@@ -96,96 +97,14 @@ export default function FindTicket() {
     const result = dataAllFlights?.filter((items) => {
       return items.from.location === departureCity && items.to.location === destinationCity;
     });
-    setFilteredFlightByLocation(result);
-    setDataFlightIsFlitered(result);
+    setDataAllFlights(result);
     setFilteredFlightByTransitDirect(false);
     setFilteredFlightByTransitOne(false);
     setFilteredFlightByTransitMuch(false);
-    setFilteredFlightByAirlinesAa(false);
-    setFilteredFlightByAirlinesGi(false);
-    setFilteredFlightByAirlinesCl(false);
-    setFilteredFlightByAirlinesLa(false);
-    setFilteredFlightByAirlinesSa(false);
-  };
-
-  const handleSetFilter = () => {
-    const resultFilterByTransit = dataFlightIsFlitered?.filter((items) => {
-      return filteredFlightByTransitDirect ? items.transit === 0 : null || filteredFlightByTransitOne ? items.transit === 1 : null || filteredFlightByTransitMuch ? items.transit > 1 : null;
-    });
-
-    const resultFilterByAirlines = resultFilterByTransit?.filter((items) => {
-      return filteredFlightByAirlinesGi && filteredFlightByAirlinesAa && filteredFlightByAirlinesLa && filteredFlightByAirlinesSa && filteredFlightByAirlinesCl
-        ? items.name === 'Garuda Indonesia' || items.name === 'AirAsia Indonesia' || items.name === 'Lion Air' || items.name === 'Singapore Airlines' || items.name === 'Citilink'
-        : filteredFlightByAirlinesGi && filteredFlightByAirlinesAa && filteredFlightByAirlinesLa && filteredFlightByAirlinesSa
-        ? items.name === 'Garuda Indonesia' || items.name === 'AirAsia Indonesia' || items.name === 'Lion Air' || items.name === 'Singapore Airlines'
-        : filteredFlightByAirlinesGi && filteredFlightByAirlinesAa && filteredFlightByAirlinesLa
-        ? items.name === 'Garuda Indonesia' || items.name === 'AirAsia Indonesia' || items.name === 'Lion Air'
-        : filteredFlightByAirlinesGi && filteredFlightByAirlinesAa && filteredFlightByAirlinesSa && filteredFlightByAirlinesCl
-        ? items.name === 'Garuda Indonesia' || items.name === 'AirAsia Indonesia' || items.name === 'Singapore Airlines' || items.name === 'Citilink'
-        : filteredFlightByAirlinesGi && filteredFlightByAirlinesAa && filteredFlightByAirlinesSa
-        ? items.name === 'Garuda Indonesia' || items.name === 'AirAsia Indonesia' || items.name === 'Singapore Airlines'
-        : filteredFlightByAirlinesGi && filteredFlightByAirlinesAa
-        ? items.name === 'Garuda Indonesia' || items.name === 'AirAsia Indonesia'
-        : filteredFlightByAirlinesGi && filteredFlightByAirlinesLa && filteredFlightByAirlinesSa && filteredFlightByAirlinesCl
-        ? items.name === 'Garuda Indonesia' || items.name === 'Lion Air' || items.name === 'Singapore Airlines' || items.name === 'Citilink'
-        : filteredFlightByAirlinesGi && filteredFlightByAirlinesLa && filteredFlightByAirlinesSa
-        ? items.name === 'Garuda Indonesia' || items.name === 'Lion Air' || items.name === 'Singapore Airlines'
-        : filteredFlightByAirlinesGi && filteredFlightByAirlinesLa
-        ? items.name === 'Garuda Indonesia' || items.name === 'Lion Air'
-        : filteredFlightByAirlinesGi && filteredFlightByAirlinesSa && filteredFlightByAirlinesCl
-        ? items.name === 'Garuda Indonesia' || items.name === 'Singapore Airlines' || items.name === 'Citilink'
-        : filteredFlightByAirlinesGi && filteredFlightByAirlinesSa
-        ? items.name === 'Garuda Indonesia' || items.name === 'Singapore Airlines'
-        : filteredFlightByAirlinesGi && filteredFlightByAirlinesCl
-        ? items.name === 'Garuda Indonesia' || items.name === 'Citilink'
-        : filteredFlightByAirlinesGi
-        ? items.name === 'Garuda Indonesia'
-        : filteredFlightByAirlinesAa && filteredFlightByAirlinesLa && filteredFlightByAirlinesSa && filteredFlightByAirlinesCl
-        ? items.name === 'AirAsia Indonesia' || items.name === 'Lion Air' || items.name === 'Singapore Airlines' || items.name === 'Citilink'
-        : filteredFlightByAirlinesAa && filteredFlightByAirlinesLa && filteredFlightByAirlinesSa
-        ? items.name === 'AirAsia Indonesia' || items.name === 'Lion Air' || items.name === 'Singapore Airlines'
-        : filteredFlightByAirlinesAa && filteredFlightByAirlinesLa
-        ? items.name === 'AirAsia Indonesia' || items.name === 'Lion Air'
-        : filteredFlightByAirlinesAa && filteredFlightByAirlinesSa && filteredFlightByAirlinesCl
-        ? items.name === 'AirAsia Indonesia' || items.name === 'Singapore Airlines' || items.name === 'Citilink'
-        : filteredFlightByAirlinesAa && filteredFlightByAirlinesSa
-        ? items.name === 'AirAsia Indonesia' || items.name === 'Singapore Airlines'
-        : filteredFlightByAirlinesAa && filteredFlightByAirlinesCl
-        ? items.name === 'AirAsia Indonesia' || items.name === 'Citilink'
-        : filteredFlightByAirlinesAa
-        ? items.name === 'AirAsia Indonesia'
-        : filteredFlightByAirlinesLa && filteredFlightByAirlinesSa && filteredFlightByAirlinesCl
-        ? items.name === 'Lion Air' || items.name === 'Singapore Airlines' || items.name === 'Citilink'
-        : filteredFlightByAirlinesLa && filteredFlightByAirlinesSa
-        ? items.name === 'Lion Air' || items.name === 'Singapore Airlines'
-        : filteredFlightByAirlinesLa && filteredFlightByAirlinesCl
-        ? items.name === 'Lion Air' || items.name === 'Citilink'
-        : filteredFlightByAirlinesLa
-        ? items.name === 'Lion Air'
-        : filteredFlightByAirlinesSa && filteredFlightByAirlinesCl
-        ? items.name === 'Singapore Airlines' || items.name === 'Citilink'
-        : filteredFlightByAirlinesSa
-        ? items.name === 'Singapore Airlines'
-        : filteredFlightByAirlinesCl
-        ? items.name === 'Citilink'
-        : filteredFlightByAirlinesGi && filteredFlightByAirlinesSa && filteredFlightByAirlinesCl
-        ? items?.name === 'Garuda Indonesia' || items.name === 'Singapore Airlines' || items.name === 'Citilink'
-        : null;
-    });
-
-    setFilteredFlightByLocation(resultFilterByAirlines || resultFilterByTransit);
   };
 
   const handleResetFilter = () => {
-    setFilteredFlightByLocation(dataFlightIsFlitered);
-    setFilteredFlightByTransitDirect(false);
-    setFilteredFlightByTransitOne(false);
-    setFilteredFlightByTransitMuch(false);
-    setFilteredFlightByAirlinesAa(false);
-    setFilteredFlightByAirlinesGi(false);
-    setFilteredFlightByAirlinesCl(false);
-    setFilteredFlightByAirlinesLa(false);
-    setFilteredFlightByAirlinesSa(false);
+    window.location.reload(false);
   };
 
   return (
@@ -263,7 +182,7 @@ export default function FindTicket() {
         </div>
         <div className='flex flex-wrap gap-y-2 w-[70%] justify-between items-center pe-4 sm:pe-6 lg:pe-8'>
           <h1 className='text-[#000] text-[16px] md:text-[24px] font-semibold'>
-            Select Ticket <span className='text-secondary text-[12px] md:text-[16px] font-semibold'>({filteredFlightByLocation?.length} flights found)</span>
+            Select Ticket <span className='text-secondary text-[12px] md:text-[16px] font-semibold'>({dataAllFlights?.length} flights found)</span>
           </h1>
           <div className='flex gap-x-2'>
             <h1 className='text-[#000] text-[12px] md:text-[16px] font-semibold'>Sort by</h1>
@@ -298,15 +217,15 @@ export default function FindTicket() {
             </div>
             <div className={`${filterFacilities ? 'flex' : 'hidden'} justify-between items-center mb-3`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>Luggage</h1>
-              <input type='checkbox' onChange={() => setFilteredFlightByFacilitiesBagage(!filteredFlightByFacilitiesBagage)} />
+              <input type='checkbox' value={'1'} onChange={handleChangeFilterByFacilities} />
             </div>
             <div className={`${filterFacilities ? 'flex' : 'hidden'} justify-between items-center mb-3`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>In-Flight Meal</h1>
-              <input type='checkbox' onChange={() => setFilteredFlightByFacilitiesMeal(!filteredFlightByFacilitiesMeal)} />
+              <input type='checkbox' value={'2'} onChange={handleChangeFilterByFacilities} />
             </div>
             <div className={`${filterFacilities ? 'flex' : 'hidden'} justify-between items-center mb-5`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>Wi-fi</h1>
-              <input type='checkbox' onChange={() => setFilteredFlightByFacilitiesWifi(!filteredFlightByFacilitiesWifi)} />
+              <input type='checkbox' value={'3'} onChange={handleChangeFilterByFacilities} />
             </div>
           </div>
           <div className='border-b border-[#E5E5E5] mb-5'>
@@ -360,23 +279,23 @@ export default function FindTicket() {
             </div>
             <div className={`${filterAirlines ? 'flex' : 'hidden'} justify-between items-center mb-3`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>Garuda Indonesia</h1>
-              <input type='checkbox' checked={filteredFlightByAirlinesGi ? true : false} onChange={() => setFilteredFlightByAirlinesGi(!filteredFlightByAirlinesGi)} />
+              <input type='checkbox' value={'2'} onChange={handleChangeFilterByAirlines} />
             </div>
             <div className={`${filterAirlines ? 'flex' : 'hidden'} justify-between items-center mb-3`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>Air Asia</h1>
-              <input type='checkbox' checked={filteredFlightByAirlinesAa ? true : false} onChange={() => setFilteredFlightByAirlinesAa(!filteredFlightByAirlinesAa)} />
+              <input type='checkbox' value={'4'} onChange={handleChangeFilterByAirlines} />
             </div>
             <div className={`${filterAirlines ? 'flex' : 'hidden'} justify-between items-center mb-3`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>Lion Air</h1>
-              <input type='checkbox' checked={filteredFlightByAirlinesLa ? true : false} onChange={() => setFilteredFlightByAirlinesLa(!filteredFlightByAirlinesLa)} />
+              <input type='checkbox' value={'3'} onChange={handleChangeFilterByAirlines} />
             </div>
             <div className={`${filterAirlines ? 'flex' : 'hidden'} justify-between items-center mb-3`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>Singapore Airlines</h1>
-              <input type='checkbox' checked={filteredFlightByAirlinesSa ? true : false} onChange={() => setFilteredFlightByAirlinesSa(!filteredFlightByAirlinesSa)} />
+              <input type='checkbox' value={'1'} onChange={handleChangeFilterByAirlines} />
             </div>
             <div className={`${filterAirlines ? 'flex' : 'hidden'} justify-between items-center mb-5`}>
               <h1 className='text-[#000] text-[14px] font-normal leading-5'>Citilink</h1>
-              <input type='checkbox' checked={filteredFlightByAirlinesCl ? true : false} onChange={() => setFilteredFlightByAirlinesCl(!filteredFlightByAirlinesCl)} />
+              <input type='checkbox' value={'5'} onChange={handleChangeFilterByAirlines} />
             </div>
           </div>
           <div className='mb-5 border-[#E5E5E5] border-b'>
@@ -396,15 +315,15 @@ export default function FindTicket() {
               <h1 className='text-[16px] font-semibold text-blue'>{format(maxPrice)}</h1>
             </div>
           </div>
-          <div
+          {/* <div
             className='flex bg-blue hover:bg-[#FFF] mx-auto w-[50%] p-1 justify-center items-center rounded-md text-white hover:text-[#2395FF] text-[14px] font-medium hover:cursor-pointer hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'
             onClick={handleSetFilter}
           >
             Set Filter
-          </div>
+          </div> */}
         </div>
         <div className={`w-[100%] md:w-[73%] flex flex-col`}>
-          {filteredFlightByLocation?.map((items) => {
+          {dataAllFlights?.map((items) => {
             return (
               <div className='flex flex-col w-full bg-[#fff] mb-10 rounded-[15px] px-[28px] py-[28px] md:py-[35px]' key={items.code}>
                 <div className='md:flex hidden items-center gap-x-6'>

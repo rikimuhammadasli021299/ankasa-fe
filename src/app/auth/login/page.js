@@ -13,10 +13,8 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (e) => {
-    setIsLoading(!isLoading);
     e.preventDefault();
     let formInput = {
       email,
@@ -31,17 +29,15 @@ export default function Login() {
       });
     }
 
-    if (isLoading) {
-      Swal.fire({
-        title: 'Login...',
-        html: 'Please wait...',
-        allowEscapeKey: false,
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-    }
+    Swal.fire({
+      title: 'Login...',
+      html: 'Please wait...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
     try {
       const res = await axios.post(base_url + '/auth/login', formInput, {
         headers: {
@@ -66,8 +62,6 @@ export default function Login() {
         text: error.response.data.message,
         icon: 'error',
       });
-    } finally {
-      setIsLoading(!isLoading);
     }
   };
 

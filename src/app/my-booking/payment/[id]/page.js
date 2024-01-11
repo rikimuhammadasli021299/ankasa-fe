@@ -1,9 +1,17 @@
 'use client';
-import Footer from '../components/Footer';
-import Navbar from '../components/Navbar';
+import Navbar from '@/app/components/Navbar';
+import Footer from '@/app/components/Footer';
 import { useRef, useState } from 'react';
+import { getCookie } from 'cookies-next';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import Swal from 'sweetalert2';
+const base_url = process.env.NEXT_PUBLIC_API_LINK;
 
-export default function Payment() {
+export default function Payment(props) {
+  const codeBooking = props.params.id;
+  const token = getCookie('access_token');
+  const router = useRouter();
   const [creditCardNumber, setCreditCardNumber] = useState();
   const [expiryDate, setExpiryDate] = useState();
   const [cvcOrCvv, setCvcOrCvv] = useState();
@@ -63,6 +71,119 @@ export default function Payment() {
         e.target.value = thisVal;
       }
     }
+  };
+
+  const handlePayment = async () => {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Confirmation',
+      text: 'Pay now?',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+      reverseButtons: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        return pay();
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+      }
+    });
+  };
+  const handleCancel = async () => {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Confirmation',
+      text: 'Are you sure want to cancel?',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+      reverseButtons: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        return cancelPay();
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        return false;
+      }
+    });
+  };
+
+  const pay = async () => {
+    let status = {
+      statusId: 2,
+    };
+    Swal.fire({
+      title: 'Processing payments...',
+      html: 'Please wait...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+    try {
+      const res = await axios.put(base_url + '/booking/status/' + codeBooking, status, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res.data.data);
+      Swal.fire({
+        title: 'Success!',
+        text: 'Payment successful',
+        icon: 'success',
+      });
+      navigateAfterPayment(res.data.data.code);
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        title: 'Failed!',
+        text: 'Payment failed',
+        icon: 'error',
+      });
+    }
+  };
+  const cancelPay = async () => {
+    let status = {
+      statusId: 3,
+    };
+
+    Swal.fire({
+      title: 'Canceling the order...',
+      html: 'Please wait...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+    try {
+      const res = await axios.put(base_url + '/booking/status/' + codeBooking, status, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(res.data.data);
+      Swal.fire({
+        title: 'Success!',
+        text: 'Ticket cancelled',
+        icon: 'success',
+      });
+      router.push('/my-booking');
+    } catch (error) {
+      console.log(error.response.message);
+      Swal.fire({
+        title: 'Failed!',
+        text: 'Cancel failed',
+        icon: 'error',
+      });
+    }
+  };
+
+  const navigateAfterPayment = (id) => {
+    router.push(`/my-booking/booking-pass/${id}`);
   };
 
   return (
@@ -143,6 +264,20 @@ export default function Payment() {
             <div className='flex items-center gap-x-1 p-3'>
               <img src='/icon/padlock.svg' alt='padlock' className='w-[12px] h-[12px] object-cover' />
               <h1 className='text-[10px] text-gray-600 font-normal'>Your transaction is secured with ssl certifacte</h1>
+            </div>
+            <div className='flex flex-wrap justify-around p-3 gap-5'>
+              <div
+                onClick={handleCancel}
+                className='flex w-[45%] justify-center bg-[#F24545] hover:bg-[white] text-white hover:text-[#F24545] rounded-md py-3 hover:shadow-[0px_8px_10px_0px_rgba(242,70,70,0.30)] border border-[#F24545] hover:border-[#F24545] cursor-pointer'
+              >
+                <h1 className='text-[13px] font-medium'>Cancel</h1>
+              </div>
+              <div
+                onClick={handlePayment}
+                className='flex w-[45%] justify-center bg-blue hover:bg-[white] text-white hover:text-[#2395FF] rounded-md py-3 hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#2395FF] hover:border-[#2395FF] cursor-pointer'
+              >
+                <h1 className='text-[13px] font-medium'>Pay Now</h1>
+              </div>
             </div>
           </div>
           <div className='flex flex-col md:w-[50%] w-full px-3 md:ps-0 py-3 md:py-10 md:pr-10'>

@@ -32,11 +32,17 @@ export default function FlightDetails(props) {
   const [nationality, setNationality] = useState();
   const [fullnameSameAsContact, setFullnameSameAsContact] = useState();
   const [dataDetailFlight, setDataDetailFlight] = useState();
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     getDataDetailFlight();
   }, []);
+
+  const formInputTes = {
+    title,
+    fullname: `${toggleSameContact ? fullname : fullnameSameAsContact}`,
+    nationality,
+  };
+  console.log(formInputTes);
 
   const getDataDetailFlight = async () => {
     try {
@@ -50,8 +56,7 @@ export default function FlightDetails(props) {
 
   const handleProceedPayment = async (e) => {
     e.preventDefault();
-    setIsLoading(!isLoading);
-    if (!fullname || !fullnameSameAsContact) {
+    if (toggleSameContact ? !fullname : !fullname || !fullnameSameAsContact) {
       return Swal.fire({
         title: 'Failed!',
         text: 'Fullname required',
@@ -86,39 +91,40 @@ export default function FlightDetails(props) {
         icon: 'error',
       });
     }
-    const formInput = {
-      title,
-      fullname: `${toggleSameContact ? fullname : fullnameSameAsContact}`,
-      nationality,
+    let formInput = {
+      title1: title,
+      fullname1: `${toggleSameContact ? fullname : fullnameSameAsContact}`,
+      nationality1: nationality,
     };
     console.log(formInput);
 
-    if (isLoading) {
-      Swal.fire({
-        title: 'Booking ticket...',
-        html: 'Please wait...',
-        allowEscapeKey: false,
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
+    if (!formInput.title1 || !formInput.fullname1 || !formInput.nationality1) {
+      return Swal.fire({
+        title: 'Failed!',
+        text: 'Form input aya nu kosong',
+        icon: 'error',
       });
     }
+
+    Swal.fire({
+      title: 'Booking ticket...',
+      html: 'Please wait...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
     try {
       const res = await axios.post(base_url + '/booking/tickets/' + idFlight, formInput, {
         headers: {
-          'content-type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/x-www-form-urlencoded',
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(res.data.data.message);
-      Swal.fire({
-        title: 'Success!',
-        text: 'Booking ticket successful, waiting for payment!',
-        icon: 'success',
-      });
-
-      router.push('/payment');
+      console.log('data booking', res.data.data);
+      navigateAfterBooking(res.data.data.code);
     } catch (error) {
       console.log(error);
       Swal.fire({
@@ -126,9 +132,25 @@ export default function FlightDetails(props) {
         text: error.response.data.message,
         icon: 'error',
       });
-    } finally {
-      setIsLoading(!isLoading);
     }
+  };
+
+  const navigateAfterBooking = (id) => {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Booking Successfull',
+      text: 'Pay now?',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        router.push(`/my-booking/payment/${id}`);
+      } else if (result.dismiss === Swal.DismissReason.cancel) {
+        router.push(`/my-booking`);
+      }
+    });
   };
 
   const { format } = new Intl.NumberFormat('en-us', {
@@ -303,7 +325,7 @@ export default function FlightDetails(props) {
                 disabled={toggleSameContact ? true : false}
                 onFocus={onFocusInputFullNameContact}
                 onBlur={onBlurInputFullNameContact}
-                onChange={(e) => setFullnameSameAsContact(e.target.value)}
+                onChange={toggleSameContact ? () => setFullnameSameAsContact(fullname) : (e) => setFullnameSameAsContact(e.target.value)}
               />
               <h1 ref={refLabelNationality} className='text-[#9B96AB] text-[14px] font-normal mt-5'>
                 Nationality
@@ -340,9 +362,7 @@ export default function FlightDetails(props) {
               onClick={(e) => handleProceedPayment(e)}
               className='flex mx-auto my-[40px] justify-center w-[278px] bg-blue hover:bg-white text-[#FFF] hover:text-[#2395FF] cursor-pointer rounded-[10px] px-3 py-3 hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'
             >
-              <button onClick={(e) => handleProceedPayment(e)} className='text-[18px] font-bold'>
-                Proceed to Payment
-              </button>
+              <button className='text-[18px] font-bold'>Proceed to Payment</button>
             </div>
           </div>
           <div className='flex flex-col md:w-[40%] lg:w-[30%] w-[320px] z-10'>

@@ -14,7 +14,6 @@ export default function Register() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [terms, setTerms] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -25,10 +24,24 @@ export default function Register() {
       password: password,
     };
 
-    if (!name || !email || !password) {
+    if (!name) {
       return Swal.fire({
         title: 'Failed!',
-        text: 'Name, email, & password is required',
+        text: 'Fullname is required',
+        icon: 'error',
+      });
+    }
+    if (!email) {
+      return Swal.fire({
+        title: 'Failed!',
+        text: 'Email is required',
+        icon: 'error',
+      });
+    }
+    if (!password) {
+      return Swal.fire({
+        title: 'Failed!',
+        text: 'Password is required',
         icon: 'error',
       });
     }
@@ -41,18 +54,15 @@ export default function Register() {
       });
     }
 
-    setIsLoading(!isLoading);
-    if (isLoading) {
-      Swal.fire({
-        title: 'Registering...',
-        html: 'Please wait...',
-        allowEscapeKey: false,
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-    }
+    Swal.fire({
+      title: 'Registering...',
+      html: 'Please wait...',
+      allowEscapeKey: false,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
 
     try {
       const res = await axios.post(base_url + '/auth/register', formInput, {
@@ -61,7 +71,6 @@ export default function Register() {
         },
       });
       console.log(res);
-      setIsLoading(!isLoading);
       Swal.fire({
         title: 'Success!',
         text: 'Register Success',
@@ -70,7 +79,6 @@ export default function Register() {
       router.push('/auth/login');
     } catch (error) {
       console.log(error);
-      setIsLoading(!isLoading);
       Swal.fire({
         title: 'Failed!',
         text: error.response.data.message,
@@ -106,16 +114,16 @@ export default function Register() {
                   <img src='/icon/eye-slash-visible.svg' width={30} height={30} alt='eye' className='absolute right-0 top-[13px] z-10' onClick={() => setShowPassword(!showPassword)} />
                 )}
               </div>
+              <div className='flex gap-x-4'>
+                <input onChange={(e) => setTerms(e.target.checked)} type='checkbox' className='w-[20px]' />
+                <h1 className='text-[#595959] text-[16px] font-normal'>Accept terms and condition</h1>
+              </div>
               <button
                 type='submit'
                 className='bg-blue hover:bg-white w-full py-3 text-white hover:text-[#2395FF] text-[18px] font-bold rounded-[10px] hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'
               >
                 Sign Up
               </button>
-              <div className='flex gap-x-4'>
-                <input onChange={(e) => setTerms(e.target.checked)} type='checkbox' className='w-[20px]' />
-                <h1 className='text-[#595959] text-[16px] font-normal'>Accept terms and condition</h1>
-              </div>
               <div className='flex w-[85%] self-center justify-center pt-4 border-t-2'>
                 <h1 className='text-[#4D4D4D] text-[14px] font-normal'>Already have an account?</h1>
               </div>

@@ -193,30 +193,27 @@ export default function MyBooking() {
                 </div>
                 <div className='mt-[10px] border-b border-[#E6E6E6] pb-[15px]'>
                   <h1 className='text-[#979797] text-[14px] font-normal leading-5 pl-[28px]'>
-                    {items?.ticket?.airline?.name},{' '}
-                    {items?.ticket?.airline?.name === 'Garuda Indonesia'
-                      ? 'GI-221'
-                      : items?.ticket?.airline?.name === 'Citilink'
-                      ? 'CL-221'
-                      : items?.ticket?.airline?.name === 'Singapore Airlines'
-                      ? 'SA-221'
-                      : items?.ticket?.airline?.name === 'Lion Air'
-                      ? 'LA-221'
-                      : items?.ticket?.airline?.name === 'AirAsia Indonesia'
-                      ? 'AA-221'
-                      : items?.ticket?.airline?.name}
+                    {items?.ticket?.airline?.name}, {items?.ticket?.from?.code} - {items?.ticket?.from?.terminal}
                   </h1>
                 </div>
                 <div className='flex flex-wrap gap-y-3 px-[28px] justify-between items-center mt-[20px]'>
                   <div className='flex flex-wrap items-center gap-x-[68px]'>
                     <h1 className='text-[#7A7A7A] text-[14px] font-semibold'>Status</h1>
                     <button
-                      onClick={items.statusId === 1 ? () => router.push('/payment') : items.statusId === 2 ? () => router.push('/booking-pass') : () => console.log('canceled')}
+                      onClick={
+                        items.statusId === 1
+                          ? () => router.push(`/my-booking/payment/${items.code}`)
+                          : items.statusId === 2
+                          ? () => router.push(`/my-booking/booking-pass/${items.code}`)
+                          : items.statusId === 3
+                          ? () => router.push(`/my-booking/payment/${items.code}`)
+                          : () => console.log('canceled')
+                      }
                       className={`text-[#fff] text-[14px] font-semibold left-5 py-[7px] px-[18px] rounded-[6px] ${
-                        items.statusId === 1 ? 'bg-[#FF7F23]' : items.statusId === 2 ? 'bg-[#4FCF4D]' : items.statusId === 3 ? 'Canceled' : 'bg-[#F24545]'
+                        items.statusId === 1 ? 'bg-[#FF7F23]' : items.statusId === 2 ? 'bg-[#4FCF4D]' : items.statusId === 3 ? 'bg-[#F24545]' : 'bg-[#F24545]'
                       }`}
                     >
-                      {items.statusId === 1 ? 'Waiting for payment' : items.statusId === 2 ? 'Eticket issued' : items.statusId === 3 ? 'Canceled' : items.statusId}
+                      {items.statusId === 1 ? 'Waiting for payment' : items.statusId === 2 ? 'Eticket issued' : items.statusId === 3 ? 'Cancelled' : items.statusId}
                     </button>
                   </div>
                   <div onClick={() => handleViewDetail(items)} className='flex items-center gap-x-[15px]'>

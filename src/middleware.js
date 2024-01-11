@@ -12,13 +12,7 @@ export function middleware(request) {
       return NextResponse.redirect(new URL('/', request.url));
     }
   } else {
-    if (
-      request.nextUrl.pathname.startsWith('/find-ticket') ||
-      request.nextUrl.pathname.startsWith('/my-booking') ||
-      request.nextUrl.pathname.startsWith('/payment') ||
-      request.nextUrl.pathname.startsWith('/profile') ||
-      request.nextUrl.pathname.startsWith('/booking-pass')
-    ) {
+    if (request.nextUrl.pathname.startsWith('/find-ticket') || request.nextUrl.pathname.startsWith('/my-booking') || request.nextUrl.pathname.startsWith('/profile')) {
       return NextResponse.redirect(new URL('/auth/register', request.url));
     }
   }
