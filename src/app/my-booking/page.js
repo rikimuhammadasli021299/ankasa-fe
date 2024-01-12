@@ -281,7 +281,7 @@ export default function MyBooking() {
                       <h1 className='text-blue text-[14px] font-medium'>With Insurance</h1>
                     </div>
                   </div>
-                  <div className='flex w-[150px] justify-center gap-x-5'>
+                  <div className='flex w-[150px] items-center justify-center gap-x-5'>
                     {items?.ticket?.FlightFacilities?.map((items) => {
                       return (
                         <img
@@ -294,7 +294,24 @@ export default function MyBooking() {
                     })}
                   </div>
                   <div className='flex w-[150px] items-center justify-center'>
-                    <h1 className='text-blue text-[18px] font-semibold'>{format(items.ticket.price)}</h1>
+                    <h1 className='text-blue text-[18px] font-semibold'>{items.PassengerDetail.length > 0 ? format(items.ticket.price * items.PassengerDetail.length + 2 * items.PassengerDetail.length) : format(items.ticket.price)}</h1>
+                  </div>
+                </div>
+                <div className={`${viewDetail === items ? 'flex' : 'hidden'} flex-col flex-wrap gap-y-3 w-full mt-5 px-[28px]`}>
+                  <div className='flex w-full'>
+                    <h1 className='text-[#000] text-[16px] font-medium'>Passenger Detail</h1>
+                  </div>
+                  <div className='flex flex-col gap-y-3'>
+                    {items?.PassengerDetail?.map((items) => {
+                      return (
+                        <div className='flex gap-x-2 items-center' key={items.id}>
+                          <img src='/icon/passenger.svg' alt='passenger' className='w-[20px] h-[20px] object-cover' />
+                          <h1 className='text-secondary text-[12px] font-normal'>
+                            {items.fullname}, {items.nationality}
+                          </h1>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>

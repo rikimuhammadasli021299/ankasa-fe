@@ -2,15 +2,15 @@
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
 import { useRef, useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { getCookie } from 'cookies-next';
 const base_url = process.env.NEXT_PUBLIC_API_LINK;
 
-export default function FlightDetails(props) {
-  const idFlight = props.params.flightDetails;
+export default function FlightDetails({ searchParams }) {
+  const idFlight = searchParams.flight;
+  const passenger = parseInt(searchParams.passenger);
   const token = getCookie('access_token');
   const router = useRouter();
   const refLabelFullName = useRef(null);
@@ -22,27 +22,29 @@ export default function FlightDetails(props) {
   const refCardTitle = useRef(null);
   const refLabelNationality = useRef(null);
   const refCardNationality = useRef(null);
-  const [checked, setChecked] = useState(false);
+  const [isInsurance, setIsInsurance] = useState(false);
   const [toggleSameContact, setToggleSameContact] = useState(false);
   const [fullname, setFullname] = useState();
   const [email, setEmail] = useState();
   const [codePhone, setCodePhone] = useState();
   const [phoneNumber, setPhoneNumber] = useState();
-  const [title, setTitle] = useState();
-  const [nationality, setNationality] = useState();
-  const [fullnameSameAsContact, setFullnameSameAsContact] = useState();
   const [dataDetailFlight, setDataDetailFlight] = useState();
+  const [formPassenger, setFormPassenger] = useState({});
+  const [viewDetailPayment, setViewDetailPayment] = useState(false);
+
+  let totalPassenger = [];
+  for (let index = 0; index < passenger; index++) {
+    totalPassenger = [...totalPassenger, index + 1];
+  }
 
   useEffect(() => {
     getDataDetailFlight();
   }, []);
 
-  const formInputTes = {
-    title,
-    fullname: `${toggleSameContact ? fullname : fullnameSameAsContact}`,
-    nationality,
+  const changeFormPassenger = (value, name) => {
+    setFormPassenger({ ...formPassenger, [name]: value });
   };
-  console.log(formInputTes);
+  console.log('form passenger', formPassenger);
 
   const getDataDetailFlight = async () => {
     try {
@@ -56,52 +58,32 @@ export default function FlightDetails(props) {
 
   const handleProceedPayment = async (e) => {
     e.preventDefault();
-    if (toggleSameContact ? !fullname : !fullname || !fullnameSameAsContact) {
+    if (!fullname) {
       return Swal.fire({
         title: 'Failed!',
-        text: 'Fullname required',
+        text: 'Fullname Contact required',
         icon: 'error',
       });
     }
     if (!email) {
       return Swal.fire({
         title: 'Failed!',
-        text: 'Email required',
+        text: 'Email Contact required',
         icon: 'error',
       });
     }
     if (!phoneNumber || !codePhone) {
       return Swal.fire({
         title: 'Failed!',
-        text: 'Phone Number required',
+        text: 'Phone Number Contact required',
         icon: 'error',
       });
     }
-    if (!title) {
-      return Swal.fire({
-        title: 'Failed!',
-        text: 'Title required',
-        icon: 'error',
-      });
-    }
-    if (!nationality) {
-      return Swal.fire({
-        title: 'Failed!',
-        text: 'Nationality required',
-        icon: 'error',
-      });
-    }
-    let formInput = {
-      title1: title,
-      fullname1: `${toggleSameContact ? fullname : fullnameSameAsContact}`,
-      nationality1: nationality,
-    };
-    console.log(formInput);
 
-    if (!formInput.title1 || !formInput.fullname1 || !formInput.nationality1) {
+    if (!formPassenger) {
       return Swal.fire({
         title: 'Failed!',
-        text: 'Form input aya nu kosong',
+        text: 'Detail Data Passenger is required, please check again',
         icon: 'error',
       });
     }
@@ -117,7 +99,7 @@ export default function FlightDetails(props) {
     });
 
     try {
-      const res = await axios.post(base_url + '/booking/tickets/' + idFlight, formInput, {
+      const res = await axios.post(base_url + '/booking/tickets/' + idFlight, formPassenger, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           Authorization: `Bearer ${token}`,
@@ -233,7 +215,7 @@ export default function FlightDetails(props) {
     cardNationality.className = 'flex w-full border-b-2 pt-3 mb-3';
   };
   const onCheck = () => {
-    setChecked(!checked);
+    setIsInsurance(!isInsurance);
   };
 
   return (
@@ -255,7 +237,10 @@ export default function FlightDetails(props) {
                 className='w-full border-b-2 outline-none focus:border-b-[#2395ff] text-[16px] text-[#000] font-normal py-2'
                 onFocus={onFocusInputFullName}
                 onBlur={onBlurInputFullName}
-                onChange={(e) => setFullname(e.target.value)}
+                onChange={(e) => {
+                  setFullname(e.target.value);
+                  toggleSameContact ? changeFormPassenger(e.target.value, 'fullname1') : null;
+                }}
               />
               <h1 ref={refLabelEmail} className='text-[#9B96AB] text-[14px] font-normal mt-5'>
                 Email
@@ -272,6 +257,7 @@ export default function FlightDetails(props) {
               </h1>
               <div ref={refCardPhoneNumber} className='flex w-full border-b-2 pt-3'>
                 <select onChange={(e) => setCodePhone(e.target.value)} className='outline-none focus:outline-none' onFocus={onFocusInputPhoneNumber} onBlur={onBlurInputPhoneNumber}>
+                  <option value=''>+</option>
                   <option value='+62'>+62</option>
                   <option value='+1'>+1</option>
                   <option value='+33'>+33</option>
@@ -295,60 +281,74 @@ export default function FlightDetails(props) {
               </div>
             </div>
             <h1 className='text-[#000] text-[24px] mt-[50px] font-semibold'>Passenger Details</h1>
-            <div className='flex flex-col w-full bg-white rounded-[15px] p-5 mt-6'>
-              <div className='flex flex-wrap px-5 py-3 rounded-[10px] items-center justify-between bg-[rgba(35,149,255,0.10)]'>
-                <h1 className='text-[#595959] text-[14px] font-semibold'>Passenger : 1 Adult</h1>
-                <div className='flex items-center md:gap-x-3 gap-x-1'>
-                  <h1 className='text-[#595959] text-[14px] font-semibold'>Same as contact person</h1>
-                  <label htmlFor='toggle' className={`${toggleSameContact ? 'bg-[#2395ff]' : 'bg-[#C4C4C4]'} w-[55px] h-[30px] rounded-full cursor-pointer relative peer-checked:bg-yellow-300`}>
-                    <input type='checkbox' id='toggle' className='sr-only peer' onChange={() => setToggleSameContact(!toggleSameContact)} />
-                    <span className='bg-white w-[24px] h-[24px] rounded-full absolute left-[3px] top-[3px] peer-checked:left-[28px] transition-all duration-500'></span>
-                  </label>
+            {totalPassenger.map((items, index) => {
+              return (
+                <div className='flex flex-col w-full bg-white rounded-[15px] p-5 mt-6' key={index + 1}>
+                  <div className='flex flex-wrap px-5 py-3 rounded-[10px] items-center justify-between bg-[rgba(35,149,255,0.10)]'>
+                    <h1 className='text-[#595959] text-[14px] font-semibold'>Passenger : {items}</h1>
+                    <div className={`${items === 1 ? 'flex' : 'hidden'} items-center md:gap-x-3 gap-x-1`}>
+                      <h1 className='text-[#595959] text-[14px] font-semibold'>Same as contact person</h1>
+                      <label htmlFor='toggle' className={`${toggleSameContact ? 'bg-[#2395ff]' : 'bg-[#C4C4C4]'} w-[55px] h-[30px] rounded-full cursor-pointer relative peer-checked:bg-yellow-300`}>
+                        <input
+                          type='checkbox'
+                          id='toggle'
+                          className='sr-only peer'
+                          onChange={() => {
+                            setToggleSameContact(!toggleSameContact);
+                            toggleSameContact ? setFormPassenger({ ...formPassenger, fullname1: fullname }) : null;
+                          }}
+                        />
+                        <span className='bg-white w-[24px] h-[24px] rounded-full absolute left-[3px] top-[3px] peer-checked:left-[28px] transition-all duration-500'></span>
+                      </label>
+                    </div>
+                  </div>
+                  <h1 ref={refLabelTitle} className='text-[#9B96AB] text-[14px] font-normal mt-5'>
+                    Title
+                  </h1>
+                  <div ref={refCardTitle} className='flex w-full border-b-2 pt-3 mb-5'>
+                    <select onChange={(e) => changeFormPassenger(e.target.value, `title${items}`)} className='outline-none focus:outline-none' onFocus={onFocusInputTitle} onBlur={onBlurInputTitle}>
+                      <option value=''></option>
+                      <option value='mr'>Mr.</option>
+                      <option value='ms'>Ms.</option>
+                    </select>
+                  </div>
+                  <h1 ref={refLabelFullNameContact} className='text-[#9B96AB] text-[14px] font-normal'>
+                    Full Name
+                  </h1>
+                  <input
+                    type='text'
+                    value={toggleSameContact && items === 1 ? fullname : null}
+                    className='w-full border-b-2 outline-none focus:border-b-[#2395ff] text-[16px] text-[#000] font-normal py-2'
+                    disabled={toggleSameContact && items === 1 ? true : false}
+                    onFocus={onFocusInputFullNameContact}
+                    onBlur={onBlurInputFullNameContact}
+                    onChange={toggleSameContact && items === 1 ? (e) => changeFormPassenger(e.target.value, `fullname1`) : (e) => changeFormPassenger(e.target.value, `fullname${items}`)}
+                  />
+                  <h1 ref={refLabelNationality} className='text-[#9B96AB] text-[14px] font-normal mt-5'>
+                    Nationality
+                  </h1>
+                  <div ref={refCardNationality} className='flex w-full border-b-2 pt-3 mb-3'>
+                    <select onChange={(e) => changeFormPassenger(e.target.value, `nationality${items}`)} className='outline-none focus:outline-none' onFocus={onFocusInputNationality} onBlur={onBlurInputNationality}>
+                      <option value={''}></option>
+                      <option value='Australia'>Australia</option>
+                      <option value='France'>France</option>
+                      <option value='Indonesia'>Indonesia</option>
+                      <option value='Japan'>Japan</option>
+                      <option value='Malaysia'>Malaysia</option>
+                      <option value='Singapore'>Singapore</option>
+                      <option value='United Kingdom'>United Kingdom</option>
+                      <option value='United States'>United States</option>
+                    </select>
+                  </div>
                 </div>
-              </div>
-              <h1 ref={refLabelTitle} className='text-[#9B96AB] text-[14px] font-normal mt-5'>
-                Title
-              </h1>
-              <div ref={refCardTitle} className='flex w-full border-b-2 pt-3 mb-5'>
-                <select onChange={(e) => setTitle(e.target.value)} className='outline-none focus:outline-none' onFocus={onFocusInputTitle} onBlur={onBlurInputTitle}>
-                  <option value='mr'>Mr.</option>
-                  <option value='ms'>Ms.</option>
-                </select>
-              </div>
-              <h1 ref={refLabelFullNameContact} className='text-[#9B96AB] text-[14px] font-normal'>
-                Full Name
-              </h1>
-              <input
-                type='text'
-                value={toggleSameContact ? fullname : fullnameSameAsContact}
-                className='w-full border-b-2 outline-none focus:border-b-[#2395ff] text-[16px] text-[#000] font-normal py-2'
-                disabled={toggleSameContact ? true : false}
-                onFocus={onFocusInputFullNameContact}
-                onBlur={onBlurInputFullNameContact}
-                onChange={toggleSameContact ? () => setFullnameSameAsContact(fullname) : (e) => setFullnameSameAsContact(e.target.value)}
-              />
-              <h1 ref={refLabelNationality} className='text-[#9B96AB] text-[14px] font-normal mt-5'>
-                Nationality
-              </h1>
-              <div ref={refCardNationality} className='flex w-full border-b-2 pt-3 mb-3'>
-                <select onChange={(e) => setNationality(e.target.value)} className='outline-none focus:outline-none' onFocus={onFocusInputNationality} onBlur={onBlurInputNationality}>
-                  <option value='Australia'>Australia</option>
-                  <option value='France'>France</option>
-                  <option value='Indonesia'>Indonesia</option>
-                  <option value='Japan'>Japan</option>
-                  <option value='Malaysia'>Malaysia</option>
-                  <option value='Singapore'>Singapore</option>
-                  <option value='United Kingdom'>United Kingdom</option>
-                  <option value='United States'>United States</option>
-                </select>
-              </div>
-            </div>
-            <h1 className='text-[#000] text-[24px] mt-[50px] font-semibold'>Passenger Details</h1>
+              );
+            })}
+            <h1 className='text-[#000] text-[24px] mt-[50px] font-semibold'>Insurance</h1>
             <div className='flex flex-col w-full bg-white rounded-[15px] py-5 mt-6'>
               <div className='flex px-6 py-3 items-center justify-between border-b'>
                 <div className='flex items-center gap-x-3'>
-                  <div className={`relative cursor-pointer w-[17px] h-[17px] border-2 border-[#2395ff] ${checked ? 'bg-blue' : null} rounded-[3px]`} onClick={onCheck}>
-                    <img src='/icon/icon-check.svg' alt='check' width={15} height={15} className={`absolute opacity-0 ${checked ? 'opacity-100' : 'opacity-0'} z-50`} onClick={onCheck} />
+                  <div className={`relative cursor-pointer w-[17px] h-[17px] border-2 border-[#2395ff] ${isInsurance ? 'bg-blue' : null} rounded-[3px]`} onClick={onCheck}>
+                    <img src='/icon/icon-check.svg' alt='check' width={15} height={15} className={`absolute opacity-0 ${isInsurance ? 'opacity-100' : 'opacity-0'} z-50`} onClick={onCheck} />
                   </div>
                   <h1 className='text-[#000] md:text-[18px] text-[14px] font-semibold'>Travel Insurance</h1>
                 </div>
@@ -457,12 +457,22 @@ export default function FlightDetails(props) {
                 <img src='/icon/check-list.svg' alt='check' />
                 <h1 className='text-blue text-[14px] font-medium'>Can reschedule</h1>
               </div>
-              <div className='flex pt-[20px] border-t mt-[20px]'>
-                <div className='flex w-full justify-between items-center px-5'>
+              <div className={`flex flex-col border-t mt-[20px] relative ${viewDetailPayment ? null : ''} z-50 bg-white`}>
+                <div className='flex  w-full justify-between items-center pt-[20px] px-5 z-50 bg-white'>
                   <h1 className='text-[#000] text-[18px] font-medium'>Total Payments</h1>
-                  <div className='flex gap-x-2'>
-                    <h1 className='text-blue md:text-[18px] lg:text-[18px] xl:text-[24px] font-semibold'>{format(dataDetailFlight?.price)}</h1>
-                    <img src='/icon/arrow-bottom.svg' alt='arrow' />
+                  <div className='flex gap-x-2 cursor-pointer text-blue' onClick={() => setViewDetailPayment(!viewDetailPayment)}>
+                    <h1 className='md:text-[18px] lg:text-[18px] xl:text-[24px] font-semibold'>{format(isInsurance ? dataDetailFlight?.price * passenger + 2 * passenger : dataDetailFlight?.price * passenger)}</h1>
+                    <img src={viewDetailPayment ? '/icon/arrow-top.svg' : '/icon/arrow-bottom.svg'} alt='arrow' />
+                  </div>
+                </div>
+                <div className={`flex flex-col ${viewDetailPayment ? 'top-[55px]' : 'top-[0]'} rounded-b-[15px] pb-5 absolute w-full bg-white transition-all duration-500`}>
+                  <div className='flex w-full justify-between items-center px-5'>
+                    <h1 className='text-[#000] text-[12px] font-normal'>Ticket Price ( {format(dataDetailFlight?.price)}/pax )</h1>
+                    <h1 className='text-blue text-[12px] font-semibold'>{format(dataDetailFlight?.price * passenger)}</h1>
+                  </div>
+                  <div className='flex w-full justify-between items-center px-5'>
+                    <h1 className='text-[#000] text-[12px] font-normal'>Insurance ({format(2)}/pax)</h1>
+                    <h1 className='text-blue text-[12px] font-semibold'>{format(isInsurance ? 2 * passenger : 0)}</h1>
                   </div>
                 </div>
               </div>

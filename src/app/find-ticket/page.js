@@ -4,11 +4,11 @@ import Navbar from '../components/Navbar';
 import { useEffect, useState } from 'react';
 import RangeSlider from '../components/RangeSlider';
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 const base_url = process.env.NEXT_PUBLIC_API_LINK;
 
-export default function FindTicket() {
-  const router = useRouter();
+export default function FindTicket({ searchParams }) {
+  const passenger = searchParams.passenger;
   const [expanded, setExpanded] = useState(true);
   const [filterTransit, setFilterTransit] = useState(false);
   const [filterFacilities, setFilterFacilities] = useState(false);
@@ -151,7 +151,7 @@ export default function FindTicket() {
                 <div className='flex gap-x-2'>
                   <div className='flex gap-x-1'>
                     <img src='/icon/ellipse.svg' alt='ellipese' />
-                    <h1 className='text-white text-[12px] font-light'>6 Passenger</h1>
+                    <h1 className='text-white text-[12px] font-light'>{passenger || 1} Passenger</h1>
                   </div>
                   <div className='flex gap-x-1'>
                     <img src='/icon/ellipse.svg' alt='ellipese' />
@@ -315,12 +315,6 @@ export default function FindTicket() {
               <h1 className='text-[16px] font-semibold text-blue'>{format(maxPrice)}</h1>
             </div>
           </div>
-          {/* <div
-            className='flex bg-blue hover:bg-[#FFF] mx-auto w-[50%] p-1 justify-center items-center rounded-md text-white hover:text-[#2395FF] text-[14px] font-medium hover:cursor-pointer hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'
-            onClick={handleSetFilter}
-          >
-            Set Filter
-          </div> */}
         </div>
         <div className={`w-[100%] md:w-[73%] flex flex-col`}>
           {dataAllFlights?.map((items) => {
@@ -394,12 +388,12 @@ export default function FindTicket() {
                   </div>
                   {/* Button start */}
                   <div className='flex justify-center w-[150px]'>
-                    <button
-                      onClick={() => router.push(`/find-ticket/${items.code}`)}
+                    <Link
+                      href={{ pathname: `/find-ticket/flight-details`, query: { passenger: passenger || 1, flight: items.code } }}
                       className='bg-blue hover:bg-[white] py-[13px] px-[50px] text-white hover:text-[#2395FF] text-[16px] font-bold rounded-[10px] hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)] border border-[#fff] hover:border-[#2395FF]'
                     >
                       Select
-                    </button>
+                    </Link>
                   </div>
                   {/* Button end */}
                 </div>
