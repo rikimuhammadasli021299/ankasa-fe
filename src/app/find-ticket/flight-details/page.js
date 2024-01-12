@@ -308,8 +308,8 @@ export default function FlightDetails({ searchParams }) {
                   <div ref={refCardTitle} className='flex w-full border-b-2 pt-3 mb-5'>
                     <select onChange={(e) => changeFormPassenger(e.target.value, `title${items}`)} className='outline-none focus:outline-none' onFocus={onFocusInputTitle} onBlur={onBlurInputTitle}>
                       <option value=''></option>
-                      <option value='mr'>Mr.</option>
-                      <option value='ms'>Ms.</option>
+                      <option value='Mr'>Mr.</option>
+                      <option value='Ms'>Ms.</option>
                     </select>
                   </div>
                   <h1 ref={refLabelFullNameContact} className='text-[#9B96AB] text-[14px] font-normal'>

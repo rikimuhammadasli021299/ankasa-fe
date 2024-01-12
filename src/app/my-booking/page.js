@@ -307,7 +307,7 @@ export default function MyBooking() {
                         <div className='flex gap-x-2 items-center' key={items.id}>
                           <img src='/icon/passenger.svg' alt='passenger' className='w-[20px] h-[20px] object-cover' />
                           <h1 className='text-secondary text-[12px] font-normal'>
-                            {items.fullname}, {items.nationality}
+                            {items.title}. {items.fullname}, {items.nationality}
                           </h1>
                         </div>
                       );
