@@ -17,6 +17,7 @@ export default function FindTicket({ searchParams }) {
   const [filterAirlines, setFilterAirlines] = useState(false);
   const [filterTicket, setFilterTicket] = useState(false);
   const [viewDetail, setViewDetail] = useState(false);
+  const [sortBy, setSortBy] = useState(false);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [dataAllFlights, setDataAllFlights] = useState();
@@ -47,6 +48,8 @@ export default function FindTicket({ searchParams }) {
       console.log(error.message);
     }
   };
+
+  console.log(dataAllFlights);
 
   const handleChangeFilterByFacilities = (e) => {
     const { value, checked } = e.target;
@@ -101,6 +104,30 @@ export default function FindTicket({ searchParams }) {
     setFilteredFlightByTransitDirect(false);
     setFilteredFlightByTransitOne(false);
     setFilteredFlightByTransitMuch(false);
+  };
+
+  const handleSort = () => {
+    setSortBy(!sortBy);
+  };
+
+  const handleSortByname = async () => {
+    const result = await dataAllFlights.sort((a, b) => {
+      if (a.name.toUpperCase() < b.name.toUpperCase()) {
+        return -1;
+      }
+      if (a.name.toUpperCase() > b.name.toUpperCase()) {
+        return 1;
+      }
+
+      // names must be equal
+      return 0;
+    });
+
+    setDataAllFlights(result);
+  };
+
+  const handleSortByPrice = () => {
+    dataAllFlights.sort((a, b) => a.price - b.price);
   };
 
   const handleResetFilter = () => {
@@ -180,13 +207,21 @@ export default function FindTicket({ searchParams }) {
             </h1>
           </div>
         </div>
-        <div className='flex flex-wrap gap-y-2 w-[70%] justify-between items-center pe-4 sm:pe-6 lg:pe-8'>
+        <div className={`flex flex-wrap gap-y-2 w-[70%] justify-between items-center pe-4 sm:pe-6 lg:pe-8 relative md:overflow-visible ${sortBy ? 'overflow-visible' : 'overflow-hidden'}`}>
           <h1 className='text-[#000] text-[16px] md:text-[24px] font-semibold'>
             Select Ticket <span className='text-secondary text-[12px] md:text-[16px] font-semibold'>({dataAllFlights?.length} flights found)</span>
           </h1>
-          <div className='flex gap-x-2'>
+          <div className='flex gap-x-2 cursor-pointer' onClick={handleSort}>
             <h1 className='text-[#000] text-[12px] md:text-[16px] font-semibold'>Sort by</h1>
             <img src='/icon/sort.svg' alt='sort' />
+          </div>
+          <div className={`flex w-[83px] flex-col gap-y-2 absolute bg-slate-300 hover:bg-[#2395ff] right-[24px] top-[40px] px-3 py-2 rounded-xl hover:opacity-100 ${sortBy ? 'opacity-100' : 'opacity-0'} transition-all duration-500`}>
+            <h1 onClick={handleSortByname} className='text-[#000] text-[12px] hover:text-white font-medium cursor-pointer'>
+              Airlines
+            </h1>
+            <h1 onClick={handleSortByPrice} className='text-[#000] text-[12px] hover:text-white font-medium cursor-pointer'>
+              Price
+            </h1>
           </div>
         </div>
       </div>
