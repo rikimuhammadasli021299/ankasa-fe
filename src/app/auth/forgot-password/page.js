@@ -1,5 +1,5 @@
 'use client';
-import BackgroundAuth from '@/app/components/BackgroundAuth';
+import BackgroundAuth from '../../components/BackgroundAuth';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useState } from 'react';

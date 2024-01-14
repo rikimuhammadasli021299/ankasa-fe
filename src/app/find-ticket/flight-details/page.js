@@ -1,6 +1,6 @@
 'use client';
-import Navbar from '@/app/components/Navbar';
-import Footer from '@/app/components/Footer';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';

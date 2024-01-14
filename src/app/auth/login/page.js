@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import BackgroundAuth from '@/app/components/BackgroundAuth';
+import BackgroundAuth from '../../components/BackgroundAuth';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
