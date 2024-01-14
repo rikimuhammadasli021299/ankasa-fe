@@ -189,7 +189,7 @@ export default function Payment(props) {
   return (
     <>
       <Navbar />
-      <div className='max-w-[1366px] flex items-center bg-blue mx-auto mt-[100px]'>
+      <div className='max-w-[1366px] flex items-center bg-blue mb-[75px] mx-auto mt-[100px]'>
         <div className='flex bg-white md:flex-row flex-col w-full md:mx-[100px] my-[50px] md:my-[100px] rounded-lg mx-[35px] shadow-xl'>
           <div className='flex flex-col md:w-[50%] w-full px-3 py-3 md:py-10 md:px-10'>
             <h1 className='text-[#000] text-[18px] font-semibold'>Payment Method</h1>

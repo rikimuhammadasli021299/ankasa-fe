@@ -225,7 +225,7 @@ export default function FlightDetails({ searchParams }) {
         <img src='/icon/plane.svg' alt='logo' className='absolute bottom-0' />
       </div>
       <div className='max-w-[1366px] mx-auto mt-[-125px]'>
-        <div className='flex w-full flex-col-reverse gap-y-[50px] items-center md:items-start md:flex-row bg-[#F5F6FA] px-4 sm:px-6 lg:px-8'>
+        <div className='flex w-full flex-col-reverse gap-y-[50px] items-center md:items-start md:flex-row bg-[#F5F6FA] mb-[75px] px-4 sm:px-6 lg:px-8'>
           <div className='flex md:w-[60%] lg:w-[70%] w-[320px] flex-col z-10 md:px-7 px-0'>
             <h1 className='text-[#000] md:text-white text-[24px] font-semibold'>Contact Person Details</h1>
             <div className='flex flex-col w-full bg-white rounded-[15px] p-5 mt-6'>

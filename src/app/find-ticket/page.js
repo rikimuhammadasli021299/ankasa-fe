@@ -238,7 +238,7 @@ export default function FindTicket({ searchParams }) {
           </div>
         </div>
       </div>
-      <div className='max-w-[1366px] flex mx-auto pb-[25px] px-4 sm:px-6 lg:px-8 pt-7 bg-[#F5F6FA] gap-x-9'>
+      <div className='max-w-[1366px] flex mx-auto pb-[25px] px-4 sm:px-6 lg:px-8 pt-7 mb-[75px] bg-[#F5F6FA] gap-x-9'>
         <div className={`md:w-[27%] w-[200px] h-full md:relative absolute rounded-[15px] p-4 bg-[#fff] ${expanded ? null : 'hidden'}`}>
           <div className='border-b border-[#E5E5E5] mb-5'>
             <div className='flex justify-between items-center mb-5'>
