@@ -40,7 +40,7 @@ export default function BookingPass(props) {
   }, []);
 
   const generate = () => {
-    QRCode.toDataURL('http://localhost:3000/my-booking/booking-pass/' + codeBooking).then(setQrIdBooking);
+    QRCode.toDataURL(codeBooking).then(setQrIdBooking);
   };
 
   const getDataBookingTicket = async () => {

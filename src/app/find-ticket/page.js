@@ -44,7 +44,6 @@ export default function FindTicket({ searchParams }) {
 
   useEffect(() => {
     getAllFlight();
-    router.push(`/find-ticket?page=${1}&per_page=${per_page}&passenger=${passenger}`);
   }, [filterByFacilities, filterByAirlines, minPrice, maxPrice]);
 
   const getAllFlight = async () => {
