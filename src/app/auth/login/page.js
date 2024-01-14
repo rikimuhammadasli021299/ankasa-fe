@@ -44,7 +44,6 @@ export default function Login() {
           'content-type': 'application/x-www-form-urlencoded',
         },
       });
-      console.log(res?.data?.data?.access_token);
       Swal.fire({
         title: 'Success!',
         text: 'Login Success',
@@ -54,7 +53,7 @@ export default function Login() {
       setCookie('access_token', res?.data?.data?.access_token, { maxAge: 60 * 60 * 24 });
       setCookie('name', res?.data?.data?.name, { maxAge: 60 * 60 * 24 });
       setCookie('email', res?.data?.data?.email, { maxAge: 60 * 60 * 24 });
-      router.push('/');
+      router.push(`/find-ticket?page=1&per_page=5&passenger=1`);
     } catch (error) {
       console.log(error);
       Swal.fire({

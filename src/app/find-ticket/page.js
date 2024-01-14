@@ -1,14 +1,21 @@
 'use client';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
+import PaginationControls from '../components/PaginationControls';
 import { useEffect, useState } from 'react';
 import RangeSlider from '../components/RangeSlider';
 import axios from 'axios';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 const base_url = process.env.NEXT_PUBLIC_API_LINK;
 
 export default function FindTicket({ searchParams }) {
   const passenger = searchParams.passenger;
+  const page = searchParams.page;
+  const per_page = searchParams.per_page;
+  const start = (Number(page) - 1) * Number(per_page);
+  const end = start + Number(per_page);
+  const router = useRouter();
   const [expanded, setExpanded] = useState(true);
   const [filterTransit, setFilterTransit] = useState(false);
   const [filterFacilities, setFilterFacilities] = useState(false);
@@ -28,6 +35,7 @@ export default function FindTicket({ searchParams }) {
   const [filteredFlightByTransitMuch, setFilteredFlightByTransitMuch] = useState(false);
   const [filterByFacilities, setFilterByFacilities] = useState([]);
   const [filterByAirlines, setFilterByAirlines] = useState([]);
+  const [dataPaginations, setDataPaginations] = useState();
 
   const { format } = new Intl.NumberFormat('en-us', {
     style: 'currency',
@@ -36,6 +44,7 @@ export default function FindTicket({ searchParams }) {
 
   useEffect(() => {
     getAllFlight();
+    router.push(`/find-ticket?page=${1}&per_page=${per_page}&passenger=${passenger}`);
   }, [filterByFacilities, filterByAirlines, minPrice, maxPrice]);
 
   const getAllFlight = async () => {
@@ -44,12 +53,15 @@ export default function FindTicket({ searchParams }) {
     try {
       const res = await axios.get(url);
       setDataAllFlights(res.data.data);
+      setDataPaginations(res.data.data.slice(start, end));
     } catch (error) {
       console.log(error.message);
     }
   };
 
-  console.log(dataAllFlights);
+  useEffect(() => {
+    setDataPaginations(dataAllFlights?.slice(start, end));
+  }, [page]);
 
   const handleChangeFilterByFacilities = (e) => {
     const { value, checked } = e.target;
@@ -101,6 +113,7 @@ export default function FindTicket({ searchParams }) {
       return items.from.location === departureCity && items.to.location === destinationCity;
     });
     setDataAllFlights(result);
+    setDataPaginations(result);
     setFilteredFlightByTransitDirect(false);
     setFilteredFlightByTransitOne(false);
     setFilteredFlightByTransitMuch(false);
@@ -111,7 +124,7 @@ export default function FindTicket({ searchParams }) {
   };
 
   const handleSortByname = async () => {
-    const result = await dataAllFlights.sort((a, b) => {
+    const result = await dataPaginations.sort((a, b) => {
       if (a.name.toUpperCase() < b.name.toUpperCase()) {
         return -1;
       }
@@ -123,11 +136,11 @@ export default function FindTicket({ searchParams }) {
       return 0;
     });
 
-    setDataAllFlights(result);
+    setDataPaginations(result);
   };
 
   const handleSortByPrice = () => {
-    dataAllFlights.sort((a, b) => a.price - b.price);
+    dataPaginations.sort((a, b) => a.price - b.price);
   };
 
   const handleResetFilter = () => {
@@ -352,7 +365,7 @@ export default function FindTicket({ searchParams }) {
           </div>
         </div>
         <div className={`w-[100%] md:w-[73%] flex flex-col`}>
-          {dataAllFlights?.map((items) => {
+          {dataPaginations?.map((items) => {
             return (
               <div className='flex flex-col w-full bg-[#fff] mb-10 rounded-[15px] px-[28px] py-[28px] md:py-[35px]' key={items.code}>
                 <div className='md:flex hidden items-center gap-x-6'>
@@ -494,6 +507,7 @@ export default function FindTicket({ searchParams }) {
               </div>
             );
           })}
+          <PaginationControls rows={dataAllFlights?.length} hasNextPage={end < dataAllFlights?.length} hasPrevPage={start > 0} />
         </div>
       </div>
       <Footer />

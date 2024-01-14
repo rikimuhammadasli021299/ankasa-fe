@@ -40,7 +40,7 @@ export default function Navbar() {
                 </div>
                 <div className='flex'>
                   <Link
-                    href={'/find-ticket'}
+                    href={{ pathname: '/find-ticket', query: { page: 1, per_page: 5, passenger: 1 } }}
                     className={`mx-8 flex py-2 text-primary hover:text-white hover:bg-[#2395ff] lg:mx-6 xl:mx-8 hover:rounded-lg p-2 ${
                       pathname === '/find-ticket' || pathname === '/flight-details' ? 'border-b-4 border-[#2395ff] font-bold' : 'font-medium'
                     } hover:shadow-[0px_8px_10px_0px_rgba(35,149,255,0.30)]`}
@@ -91,7 +91,7 @@ export default function Navbar() {
                 <input type='text' placeholder='Where you want to go?' className='text-primary bg-[#F5F5F5] ms-3 rounded-lg focus:outline-0' />
               </div>
               <Link
-                href={'/find-ticket'}
+                href={{ pathname: '/find-ticket', query: { page: 1, per_page: 5, passenger: 1 } }}
                 className={`mx-2 block w-[115px] py-2 text-primary hover:text-white hover:bg-[#2395ff] lg:mx-6 xl:mx-8  ${
                   pathname === '/find-ticket' || pathname === '/fligh-details' ? 'border-b-4 border-[#2395ff] font-bold' : 'font-medium'
                 } p-2`}

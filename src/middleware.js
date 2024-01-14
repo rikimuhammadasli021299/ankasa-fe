@@ -3,12 +3,7 @@ import { NextResponse, NextRequest } from 'next/server';
 export function middleware(request) {
   let isLogin = request.cookies.has('access_token');
   if (isLogin) {
-    if (
-      request.nextUrl.pathname.startsWith('/auth/register') ||
-      request.nextUrl.pathname.startsWith('/auth/login') ||
-      request.nextUrl.pathname.startsWith('/auth/forgot-password') ||
-      request.nextUrl.pathname.startsWith('/auth/verification-otp')
-    ) {
+    if (request.nextUrl.pathname.startsWith('/auth/register') || request.nextUrl.pathname.startsWith('/auth/login') || request.nextUrl.pathname.startsWith('/auth/forgot-password')) {
       return NextResponse.redirect(new URL('/', request.url));
     }
   } else {

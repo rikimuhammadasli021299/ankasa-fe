@@ -100,7 +100,7 @@ export default function Home() {
                       <p className='text-[#000] text-[14px] font-bold ms-2'>First Class</p>
                     </div>
                   </div>
-                  <Link href={{ pathname: '/find-ticket', query: { passenger: parseInt(child) + parseInt(adult) } }} className='flex justify-around bg-blue w-full items-center h-14 rounded-md mt-5'>
+                  <Link href={{ pathname: '/find-ticket', query: { page: 1, per_page: 5, passenger: parseInt(child) + parseInt(adult) || 1 } }} className='flex justify-around bg-blue w-full items-center h-14 rounded-md mt-5'>
                     <h1 className='text-white text-[18px] font-bold'>SEARCH FLIGHT</h1>
                     <img src='/icon/arrow-next.svg' alt='arrow' />
                   </Link>
