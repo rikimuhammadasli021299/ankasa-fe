@@ -221,9 +221,9 @@ export default function MyBooking() {
                     {viewDetail === items ? <img src='/icon/arrow-top.svg' alt='arrow' /> : <img src='/icon/arrow-bottom.svg' alt='arrow' />}
                   </div>
                 </div>
-                <div className={`${viewDetail === items ? 'flex' : 'hidden'} flex-col md:flex-row items-center mt-3 px-[28px]`}>
+                <div className={`${viewDetail === items ? 'flex' : 'hidden'} flex-col md:flex-row items-center mt-3 px-[17px] justify-center md:justify-start`}>
                   {/* from */}
-                  <div className='flex w-full md:w-[45%] p-3 justify-center '>
+                  <div className='flex w-full md:w-[45%] p-3 justify-center md:justify-start'>
                     <div className='flex flex-col gap-y-2 items-center md:items-start'>
                       <div className='flex items-center gap-x-2'>
                         <img src='/icon/one-way-dark.svg' alt='logo' />
@@ -247,7 +247,7 @@ export default function MyBooking() {
                     <img src='/icon/sort-grey.svg' alt='transfer' className='block md:hidden' />
                   </div>
                   {/* to */}
-                  <div className='flex w-full md:w-[45%] p-3 justify-center'>
+                  <div className='flex w-full md:w-[45%] p-3 justify-center md:justify-end'>
                     <div className='flex flex-col gap-y-2 items-center md:items-start'>
                       <div className='flex gap-x-2'>
                         <img src='/icon/one-way-dark.svg' alt='logo' />
@@ -266,7 +266,7 @@ export default function MyBooking() {
                     </div>
                   </div>
                 </div>
-                <div className={`${viewDetail === items ? 'flex' : 'hidden'} flex-wrap gap-y-5 w-full mt-3 justify-around px-[28px]`}>
+                <div className={`${viewDetail === items ? 'flex' : 'hidden'} flex-wrap gap-y-5 w-full mt-3 justify-around md:justify-between px-[28px]`}>
                   <div className='flex flex-col w-[150px] justify-center gap-y-2'>
                     <div className={`${items.isRefundable ? 'flex' : 'hidden'} items-center gap-x-2`}>
                       <img src='/icon/check-list.svg' alt='check' />
