@@ -217,8 +217,8 @@ export default function MyBooking() {
                     </button>
                   </div>
                   <div onClick={() => handleViewDetail(items)} className='flex items-center gap-x-[15px]'>
-                    <h1 className='text-blue text-[16px] font-semibold'>View Details</h1>
-                    {viewDetail === items ? <img src='/icon/arrow-top.svg' alt='arrow' /> : <img src='/icon/arrow-bottom.svg' alt='arrow' />}
+                    <h1 className='text-blue text-[16px] font-semibold cursor-pointer'>View Details</h1>
+                    {viewDetail === items ? <img src='/icon/arrow-top.svg' alt='arrow' className='cursor-pointer' /> : <img src='/icon/arrow-bottom.svg' alt='arrow' className='cursor-pointer' />}
                   </div>
                 </div>
                 <div className={`${viewDetail === items ? 'flex' : 'hidden'} flex-col md:flex-row items-center mt-3 px-[17px] justify-center md:justify-start`}>
